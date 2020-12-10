@@ -20,7 +20,7 @@ const devConfig = {
   database: process.env.PG_DATABASE,
 };
 
-proConfig = {
+const proConfig = {
   connectionString: process.env.DATABASE_URL, //coming from Heroku addons
 };
 
