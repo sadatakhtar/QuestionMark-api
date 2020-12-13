@@ -39,12 +39,18 @@ if (process.env.NODE_ENV === 'production') {
 //console.log (path.join (__dirname, 'client/build'));
 
 // middleware
-app.use (cors);
+app.use (cors ());
 app.use (express.json ()); //allow use to access request.body
 
 //ROUTES
 app.get ('/', (req, res) => {
+  console.log ('hi');
   res.send ('Homepage here');
+});
+
+app.get ('/allquestions', async (req, res) => {
+  const allquestions = await pool.query ('select question from question');
+  res.json (allquestions.rows);
 });
 
 //SERVER LISTEN
