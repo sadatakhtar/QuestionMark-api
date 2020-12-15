@@ -70,6 +70,17 @@ app.get('/ask-question/:user_id',async(req,res)=>{
   res.json(userObj);
 });
 
+
+app.get("/modules", async (req,res) =>{
+  let moduleQuery = await pool.query("select module from module")
+  let modules=moduleQuery.rows;
+  if(typeof modules!=undefined)
+    res.json(modules)
+  else
+    res.send("Not working")  
+});
+
+
 //SERVER LISTEN
 app.listen (PORT, () => {
   console.log (`Server listening on port ${PORT}`);
