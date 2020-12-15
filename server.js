@@ -53,6 +53,23 @@ app.get ('/allquestions', async (req, res) => {
   res.json (allquestions.rows);
 });
 
+// this End point returns name, answered and unanswered questions for a particular user from their id.
+app.get('/ask-question/:user_id',async(req,res)=>{
+  let user_id=req.params.user_id;
+  let userObj={};
+
+  const name=await pool.query(' select name from users where id=$1',[user_id])
+  userObj.name=name.rows;
+
+  const answeredQuestions= await pool.query('select question from question where answered =1 and users_id=$1',[user_id])
+  userObj.answeredQuestions=answeredQuestions.rows;
+
+  const unAnsweredQuestions= await pool.query('select question from question where answered =0 and users_id=$1',[user_id])
+  userObj.unAnsweredQuestions=unAnsweredQuestions.rows;
+
+  res.json(userObj);
+});
+
 //SERVER LISTEN
 app.listen (PORT, () => {
   console.log (`Server listening on port ${PORT}`);
