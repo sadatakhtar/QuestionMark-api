@@ -44,7 +44,6 @@ app.use (express.json ()); //allow use to access request.body
 
 //ROUTES
 app.get ('/', (req, res) => {
-  console.log ('hi');
   res.send ('Homepage here');
 });
 
@@ -80,6 +79,12 @@ app.get("/modules", async (req,res) =>{
     res.send("Not working")  
 });
 
+
+app.post("/ask-question",async (req,res)=>{
+  const quesObj=req.body;
+  let askQuestionQuery = await pool.query("insert into question(question_title,question,module_id,users_id,question_date,answered) values($1,$2,$3,$4,$5,$6)",[quesObj.question_title,quesObj.question,quesObj.module_id,quesObj.users_id,quesObj.question_date,quesObj.answered])
+  res.json("Values have been inserted")
+});
 
 //SERVER LISTEN
 app.listen (PORT, () => {
