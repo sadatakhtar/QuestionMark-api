@@ -49,8 +49,68 @@ app.get ('/', (req, res) => {
 });
 
 app.get ('/allquestions', async (req, res) => {
-  const allquestions = await pool.query ('select question from question');
-  res.json (allquestions.rows);
+  try {
+    const allquestions = await pool.query (
+      'select id, module_id, question from question'
+    );
+    const filter = await pool.query ('select id,module from module');
+    const data = {};
+    data.allquestions = allquestions.rows;
+    data.filter = filter.rows;
+    res.json (data);
+  } catch (err) {
+    console.error (err);
+  }
+});
+
+app.get ('/answered', async (req, res) => {
+  try {
+    const answered = await pool.query (
+      'select answer.question_id,question.question,question.answered,question.module_id,answer.answer from question inner join answer on question.id = answer.question_id'
+    );
+    const filter = await pool.query ('select id,module from module');
+    const data = {};
+    data.answered = answered.rows;
+    data.filter = filter.rows;
+    res.json (data);
+  } catch (err) {
+    console.error (err);
+  }
+});
+
+app.get ('/unanswered', async (req, res) => {
+  try {
+    const unanswered = await pool.query (
+      'select id,question,module_id from question where answered = 0'
+    );
+    const filter = await pool.query ('select id,module from module');
+    const data = {};
+    data.unanswered = unanswered.rows;
+    data.filter = filter.rows;
+    res.json (data);
+  } catch (err) {
+    console.error (err);
+  }
+});
+
+app.get ('/selectedquestionpage/:id', async (req, res) => {
+  const id = req.params.id;
+  const data = {};
+  try {
+    const selectedquestion = await pool.query (
+      `select  question.id, question.question_title, question.question,to_char (question.question_date, 'DD-MM-YYYY') as question_date,question.answered,users.name from question inner join users on users.id = question.users_id where question.id =$1 `,
+      [id]
+    );
+    const selectedquestion_answer = await pool.query (
+      `select answer.answer,answer.users_id,to_char(answer.answer_date, 'DD-MM-YYYY') as answer_date from answer inner join users on users.id = answer.users_id where answer.question_id = $1`,
+      [id]
+    );
+    data.question = selectedquestion.rows;
+    data.answer = selectedquestion_answer.rows;
+    res.json (data);
+  } catch (err) {
+    console.error (err);
+  }
 });
 
 //SERVER LISTEN
