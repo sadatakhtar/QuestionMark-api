@@ -53,6 +53,48 @@ app.get ('/allquestions', async (req, res) => {
   res.json (allquestions.rows);
 });
 
+//SIGNUP 
+app.post('/register', (req, res) => {
+
+  const {username, email, password } = req.body;
+  
+  pool.query(`insert into users (name, email, password) values ($1, $2, $3)`, 
+  [username, email, password], (error, result)=> {
+      console.log(error, result);
+      if(error){
+          res.status(400).send({error: "Database connection not established!"});
+      }
+
+      if(result){
+          res.status(200).send({success: true});
+      }else{
+          res.status(401).send({success: false});
+      }
+     
+  })
+});
+
+//LOGIN
+app.post('/login', (req, res)=> {
+
+  const {username, password} = req.body;
+  
+  pool.query(`select * from users where name=$1 and password=$2`, 
+  [username, password], (error, result)=> {
+      if(error){
+          res.status(400).send({error: "Database connection not established!"});
+      }
+
+      if(result.rows.length > 0){
+          res.json(result.rows);
+         // res.status(200).send({success: true});
+      }else{
+         // res.status(401).send({message: "Wrong username/password combination"});
+          res.status(401).json({success: false});
+      }
+  })
+});
+
 //SERVER LISTEN
 app.listen (PORT, () => {
   console.log (`Server listening on port ${PORT}`);
