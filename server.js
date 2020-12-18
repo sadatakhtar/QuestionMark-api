@@ -49,50 +49,115 @@ app.get ('/', (req, res) => {
 });
 
 app.get ('/allquestions', async (req, res) => {
-  const allquestions = await pool.query ('select question from question');
-  res.json (allquestions.rows);
+  try {
+    const allquestions = await pool.query (
+      'select id, module_id, question from question'
+    );
+    const filter = await pool.query ('select id,module from module');
+    const data = {};
+    data.allquestions = allquestions.rows;
+    data.filter = filter.rows;
+    res.json (data);
+  } catch (err) {
+    console.error (err);
+  }
 });
 
-//SIGNUP 
-app.post('/register', (req, res) => {
+// answered questions
+app.get ('/answered', async (req, res) => {
+  try {
+    const answered = await pool.query (
+      'select answer.question_id,question.question,question.answered,question.module_id,answer.answer from question inner join answer on question.id = answer.question_id'
+    );
+    const filter = await pool.query ('select id,module from module');
+    const data = {};
+    data.answered = answered.rows;
+    data.filter = filter.rows;
+    res.json (data);
+  } catch (err) {
+    console.error (err);
+  }
+});
 
-  const {username, email, password } = req.body;
-  
-  pool.query(`insert into users (name, email, password) values ($1, $2, $3)`, 
-  [username, email, password], (error, result)=> {
-      console.log(error, result);
-      if(error){
-          res.status(400).send({error: "Database connection not established!"});
+// unanswered questions
+app.get ('/unanswered', async (req, res) => {
+  try {
+    const unanswered = await pool.query (
+      'select id,question,module_id from question where answered = 0'
+    );
+    const filter = await pool.query ('select id,module from module');
+    const data = {};
+    data.unanswered = unanswered.rows;
+    data.filter = filter.rows;
+    res.json (data);
+  } catch (err) {
+    console.error (err);
+  }
+});
+// selected question description
+app.get ('/selectedquestionpage/:id', async (req, res) => {
+  const id = req.params.id;
+  const data = {};
+  try {
+    const selectedquestion = await pool.query (
+      `select  question.id, question.question_title, question.question,to_char (question.question_date, 'DD-MM-YYYY') as question_date,question.answered,users.name from question inner join users on users.id = question.users_id where question.id =$1 `,
+      [id]
+    );
+    const selectedquestion_answer = await pool.query (
+      `select answer.answer,answer.users_id,to_char(answer.answer_date, 'DD-MM-YYYY') as answer_date from answer inner join users on users.id = answer.users_id where answer.question_id = $1`,
+      [id]
+    );
+    data.question = selectedquestion.rows;
+    data.answer = selectedquestion_answer.rows;
+    res.json (data);
+  } catch (err) {
+    console.error (err);
+  }
+});
+
+//SIGNUP
+app.post ('/register', (req, res) => {
+  const {username, email, password} = req.body;
+
+  pool.query (
+    `insert into users (name, email, password) values ($1, $2, $3)`,
+    [username, email, password],
+    (error, result) => {
+      console.log (error, result);
+      if (error) {
+        res.status (400).send ({error: 'Database connection not established!'});
       }
 
-      if(result){
-          res.status(200).send({success: true});
-      }else{
-          res.status(401).send({success: false});
+      if (result) {
+        res.status (200).send ({success: true});
+      } else {
+        res.status (401).send ({success: false});
       }
-     
-  })
+    }
+  );
 });
 
 //LOGIN
-app.post('/login', (req, res)=> {
-
+app.post ('/login', (req, res) => {
   const {username, password} = req.body;
-  
-  pool.query(`select * from users where name=$1 and password=$2`, 
-  [username, password], (error, result)=> {
-      if(error){
-          res.status(400).send({error: "Database connection not established!"});
+
+  pool.query (
+    `select * from users where name=$1 and password=$2`,
+    [username, password],
+    (error, result) => {
+      if (error) {
+        res.status (400).send ({error: 'Database connection not established!'});
       }
 
-      if(result.rows.length > 0){
-          res.json(result.rows);
-         // res.status(200).send({success: true});
-      }else{
-         // res.status(401).send({message: "Wrong username/password combination"});
-          res.status(401).json({success: false});
+      if (result.rows.length > 0) {
+        res.json (result.rows);
+        // res.status(200).send({success: true});
+      } else {
+        // res.status(401).send({message: "Wrong username/password combination"});
+        res.status (401).json ({success: false});
       }
-  })
+    }
+  );
 });
 
 //SERVER LISTEN
