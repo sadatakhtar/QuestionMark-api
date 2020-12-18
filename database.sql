@@ -54,6 +54,14 @@ INSERT INTO module(module) VALUES('SQL');
 INSERT INTO module(module) VALUES('MongoDB');
 
 
+
+
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('GitHub Error Message - Permission denied (publickey)',`I'm using the terminal, I'm in the root, the GitHub repository exists and I don't know what to do now.
+> git push -u origin master
+Permission denied (publickey).
+fatal: Could not read from remote repository.
+Please make sure you have the correct access rights
+and the repository exists.`,1,4,'05/04/2020',0);
 INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('Git','what is git',1,3,'01/01/2020',0);
 INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('HTML','what is HTML',2,3,'01/01/2020',2);
 INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('Js','what is JavaScript',3,4,'02/01/2020',1);
