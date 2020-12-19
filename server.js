@@ -51,12 +51,16 @@ app.get ('/', (req, res) => {
 app.get ('/allquestions', async (req, res) => {
   try {
     const allquestions = await pool.query (
-      'select id, module_id, question from question'
+      'select id, module_id,question_title, question from question'
     );
     const filter = await pool.query ('select id,module from module');
+    const q_answers = await pool.query (
+      'select question.question,answer.answer from question inner join answer on question.id = answer.question_id'
+    );
     const data = {};
     data.allquestions = allquestions.rows;
     data.filter = filter.rows;
+    data.q_answers = q_answers;
     res.json (data);
   } catch (err) {
     console.error (err);
