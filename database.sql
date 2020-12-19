@@ -54,14 +54,6 @@ INSERT INTO module(module) VALUES('SQL');
 INSERT INTO module(module) VALUES('MongoDB');
 
 
-
-
-INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('GitHub Error Message - Permission denied (publickey)',`I'm using the terminal, I'm in the root, the GitHub repository exists and I don't know what to do now.
-> git push -u origin master
-Permission denied (publickey).
-fatal: Could not read from remote repository.
-Please make sure you have the correct access rights
-and the repository exists.`,1,4,'05/04/2020',0);
 INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('Git','what is git',1,3,'01/01/2020',0);
 INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('HTML','what is HTML',2,3,'01/01/2020',2);
 INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('Js','what is JavaScript',3,4,'02/01/2020',1);
@@ -71,7 +63,146 @@ INSERT INTO question(question_title,question,module_id,users_id,question_date,an
 INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('MongoDB','what is MongDB',7,2,'05/01/2020',0);
 
 
+
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('How do I undo the most recent local commits in Git?','I accidentally committed the wrong files to Git, but didn''t push the commit to the server yet.
+How can I undo those commits from the local repository',1,5,'17/01/2020',0);
+
+
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES(' How can I horizontally center a <div> within another <div> using CSS?','<div id="outer">
+
+<div id="inner">Foo foo</div>
+
+</div>',2,3,'01/01/2020',1);
+
+
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('How can I remove a specific item from an array?',E' have an array of numbers and I''m using the .push() method to add elements to it.
+
+Is there a simple way to remove a specific element from an array?
+
+I''m looking for the equivalent of something like:
+
+array.remove(number);
+
+I have to use core JavaScript. Frameworks are not allowed.',3,3,'01/02/2020',1);
+
+
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('What do these three dots in React do?','What does the ... do in React (using JSX) and what is it called?
+
+<Modal {...this.props} title=''Modal heading'' animation={false}>',4,7,'14/09/2020',0);
+
+
+
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('TypeError: Object(…) is not a function Reactjs',' am trying to import fillCalendar() to my Calendar component but it throws "TypeError: Object(...) is not a function" error.
+
+Here is my Calendar.js
+
+import React, { Component } from ''react'';
+import { fillCalendar } from '../calendar.tools' class Calendar extends Component {
+constructor(props) {
+super(props)
+this.state = {
+datesArray: fillCalendar(7, 2018),
+date: new Date(),
+monthIsOffset: false,
+monthOffset: new Date().getMonth(),
+yearOffset: new Date().getFullYear()
+}
+}
+render() {
+return (
+...
+)
+}
+}
+
+calendar.tool.js where I extract fillCalender from
+
+let fillCalendar = (month, year) => {
+let datesArray = []
+let monthStart = new Date(year,month,1).getDay()
+let yearType = false;
+let filledNodes = 0;
+// Check for leap year
+(year%4 === 0) ?
+(year%100 === 0) ?
+(year%400) ? yearType = true : yearType = false :
+yearType = true :
+yearType = false const monthArrays = yearType ? [31,29,31,30,31,30,31,31,30,31,30,31] : [31,28,31,30,31,30,31,31,30,31,30,31]
+if (month === 0) { month = 12; }
+let leadDayStart = monthArrays[month-1] - monthStart + 1 // Loop out lead date numbers for (let i = 0; i < monthStart; i++) {
+datesArray.push({date: leadDayStart, type: "leadDate", id: "leadDate" + i})
+leadDayStart++
+filledNodes++
+} ',4,4,'05/07/2020',1);
+
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('Rendering a React component with logical && vs Ternary operator','When making a conditional rendering, the most common ways are using ternary operator or logical && operator while exploiting its short circuit evaluation.
+My question is which one is preferred in tems of performance.
+
+const isTrue = /* true or false */
+
+const ConditionalRendering = () => (
+
+<>
+
+{isTrue && <Component />}
+
+{isTrue ? <Component /> : null}
+
+</>
+
+);',4,1,'26/08/2020',1);
+
+
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('What is causing undefined in my code?','I''ve recently started learning javascript and I am working on a for loop. But it throws undefined error.
+
+Here is my code
+
+var message;
+
+for (var songs = 0; songs < playlist.length; songs++) {
+
+message += ''\n'' + (songs+1) + ''. '' + playlist[songs] + ''\n'';
+
+}
+
+alert(message);',3,2,'08/11/2020',1);
+
+
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('What is the best way to create a title in HTML?','I want to add a title to my website. Whats the best way to achieve that?',2,3,'27/07/2020',1);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('Git','what is git',1,3,'01/01/2020',0);
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('Git','what is git',1,3,'01/01/2020',0);
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('Git','what is git',1,3,'01/01/2020',0);
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('Git','what is git',1,3,'01/01/2020',0);
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('Git','what is git',1,3,'01/01/2020',0);
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('Git','what is git',1,3,'01/01/2020',0);
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('Git','what is git',1,3,'01/01/2020',0);
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('Git','what is git',1,3,'01/01/2020',0);
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('Git','what is git',1,3,'01/01/2020',0);
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('Git','what is git',1,3,'01/01/2020',0);
+
+
 INSERT INTO answer(question_id,answer,users_id,answer_date) VALUES(2,'HTML stands for Hyper Text Markup Language',2,'01/01/2020');
 INSERT INTO answer(question_id,answer,users_id,answer_date) VALUES(2,'HTML is the standard markup language for Web pages',1,'01/01/2020');
 INSERT INTO answer(question_id,answer,users_id,answer_date) VALUES(3,'JavaScript, often abbreviated as JS, is a programming language that conforms to the ECMAScript specification. JavaScript is high-level, often just-in-time compiled, and multi-paradigm. ',4,'03/01/2020');
+
+
+
 
