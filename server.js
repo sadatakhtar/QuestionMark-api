@@ -60,7 +60,7 @@ app.get ('/allquestions', async (req, res) => {
     const data = {};
     data.allquestions = allquestions.rows;
     data.filter = filter.rows;
-    data.q_answers = q_answers.rows;
+    data.q_answers = q_answers;
     res.json (data);
   } catch (err) {
     console.error (err);
@@ -152,10 +152,12 @@ app.post ('/register', (req, res) => {
         }
 
         if (result) {
-          res.status (200).send ({
-            success: true,
-            message: 'Registration successfull. Please login',
-          });
+          res
+            .status (200)
+            .send ({
+              success: true,
+              message: 'Registration successfull. Please login',
+            });
         } else {
           res.status (401).send ({success: false});
         }
@@ -180,10 +182,12 @@ app.post ('/login', (req, res) => {
         res.send ({success: true, message: `Welcome ${username}`});
       } else {
         // res.status(401).send({message: "Wrong username/password combination"});
-        res.status (401).json ({
-          success: false,
-          message: 'Invalid username/password. Please register or try again',
-        });
+        res
+          .status (401)
+          .json ({
+            success: false,
+            message: 'Invalid username/password. Please register or try again',
+          });
       }
     }
   );
@@ -191,5 +195,5 @@ app.post ('/login', (req, res) => {
 
 //SERVER LISTEN
 app.listen (PORT, () => {
-  console.log (` Server listening On port ${PORT}`);
+  console.log (`Server listening on port ${PORT}`);
 });
