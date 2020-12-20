@@ -67,6 +67,7 @@ app.get ('/allquestions', async (req, res) => {
   }
 });
 
+// answered questions
 app.get ('/answered', async (req, res) => {
   try {
     const answered = await pool.query (
@@ -82,6 +83,7 @@ app.get ('/answered', async (req, res) => {
   }
 });
 
+// unanswered questions
 app.get ('/unanswered', async (req, res) => {
   try {
     const unanswered = await pool.query (
@@ -96,7 +98,7 @@ app.get ('/unanswered', async (req, res) => {
     console.error (err);
   }
 });
-
+// selected question description
 app.get ('/selectedquestionpage/:id', async (req, res) => {
   const id = req.params.id;
   const data = {};
@@ -118,7 +120,6 @@ app.get ('/selectedquestionpage/:id', async (req, res) => {
 });
 
 //SIGNUP
-
 app.post ('/register', (req, res) => {
   const {username, email, password, confirm} = req.body;
 
@@ -190,5 +191,5 @@ app.post ('/login', (req, res) => {
 
 //SERVER LISTEN
 app.listen (PORT, () => {
-  console.log (` Server listening On port ${PORT}`);
+  console.log (` Server listening on port ${PORT}`);
 });
