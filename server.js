@@ -123,30 +123,24 @@ app.post ('/register', async (req, res) => {
 
   let errorArray = [];
 
-  !username ||
-    !email ||
-    !password ||
-    (!confirm && errorArray.push ({message: 'Please enter all fields'}));
-  password.length < 5 &&
-    errorArray.push ({message: 'Password should be at least 5 characters'});
-  password !== confirm && errorArray.push ({message: 'Passwords do not match'});
+  !username || !email || !password || !confirm && errorArray.push({message: "Please enter all fields"});
+  password.length < 5 && errorArray.push({message: "Password should be at least 5 characters"});
+  password !== confirm && errorArray.push({message: "Passwords do not match"});
 
-  if (errorArray.length > 0) {
-    res.send ({errorArray});
-  } else {
-    let hashedPassword = await bcrypt.hash (password, 10);
-    console.log (hashedPassword);
+  if(errorArray.length > 0){
+    res.send({errorArray});
 
-    pool.query (
-      `insert into users (name, email, password) values ($1, $2, $3)`,
-      [username, email, hashedPassword],
-      (error, result) => {
-        console.log (error, result);
+  }else{
+  
+  // let hashedPassword = await bcrypt.hash(password, 10);
+  // console.log(hashedPassword);
 
-        if (error) {
-          res
-            .status (400)
-            .send ({error: 'Database connection not established!'});
+    pool.query(`insert into users (name, email, password) values ($1, $2, $3)`, 
+    [username, email, password], (error, result)=> {
+        console.log(error, result);
+
+        if(error){
+          res.status(400).send({error: "Database connection not established!"});
         }
 
         if (result) {
@@ -174,14 +168,13 @@ app.post ('/login', (req, res) => {
         res.status (400).send ({error: 'Database connection not established!'});
       }
 
-      if (result) {
-        res.send ({success: true, message: `Welcome ${username}`});
-      } else {
-        // res.status(401).send({message: "Wrong username/password combination"});
-        res.status (401).json ({
-          success: false,
-          message: 'Invalid username/password. Please register or try again',
-        });
+
+      if(result.rows.length > 0){
+         res.send({success: true, message: `Welcome ${username}` });
+      }else{
+         // res.status(401).send({message: "Wrong username/password combination"});
+          res.status(401).json({success: false, message: "Invalid username/password. Please register or try again"});
+
       }
     }
   );
