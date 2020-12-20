@@ -36,8 +36,6 @@ answer_date DATE
 );
 
 
-
-
 INSERT INTO users(name,email,password) VALUES('Akhil','khieth@yahoo.com',' $2b$10$TKUAzbf516ou/yWRqNZFXephWMvj0..uP/3vJUGg2NG3GSMED80xa');
 INSERT INTO users(name,email,password) VALUES('Laura','Lora@yahoo.com',' $2b$10$6HBswsNlRkwOOfNOs0pBG.VxDKY8s4pjXbIsZhn2H01D6A7ReLEza');
 INSERT INTO users(name,email,password) VALUES('Sadat','sadat@yahoo.com',' $2b$10$hFFPVUlRVXgLwsJ0RU8Tueg/awvz.MPD270QeecW.qCtNvX/aWat2');
@@ -63,8 +61,18 @@ INSERT INTO question(question_title,question,module_id,users_id,question_date,an
 INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('MongoDB','what is MongDB',7,2,'05/01/2020',0);
 
 
-
 INSERT INTO answer(question_id,answer,users_id,answer_date) VALUES(2,'HTML stands for Hyper Text Markup Language',2,'01/01/2020');
 INSERT INTO answer(question_id,answer,users_id,answer_date) VALUES(2,'HTML is the standard markup language for Web pages',1,'01/01/2020');
 INSERT INTO answer(question_id,answer,users_id,answer_date) VALUES(3,'JavaScript, often abbreviated as JS, is a programming language that conforms to the ECMAScript specification. JavaScript is high-level, often just-in-time compiled, and multi-paradigm. ',4,'03/01/2020');
+
+
+
+
+
+
+
+
+
+
+
 
