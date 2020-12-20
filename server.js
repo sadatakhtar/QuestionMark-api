@@ -48,8 +48,142 @@ app.get ('/', (req, res) => {
 });
 
 app.get ('/allquestions', async (req, res) => {
-  const allquestions = await pool.query ('select question from question');
-  res.json (allquestions.rows);
+  try {
+    const allquestions = await pool.query (
+      'select id, module_id,question_title, question from question'
+    );
+    const filter = await pool.query ('select id,module from module');
+    const q_answers = await pool.query (
+      'select question.question,answer.answer from question inner join answer on question.id = answer.question_id'
+    );
+    const data = {};
+    data.allquestions = allquestions.rows;
+    data.filter = filter.rows;
+    data.q_answers = q_answers;
+    res.json (data);
+  } catch (err) {
+    console.error (err);
+  }
+});
+
+// answered questions
+app.get ('/answered', async (req, res) => {
+  try {
+    const answered = await pool.query (
+      'select answer.question_id,question.question,question.answered,question.module_id,answer.answer from question inner join answer on question.id = answer.question_id'
+    );
+    const filter = await pool.query ('select id,module from module');
+    const data = {};
+    data.answered = answered.rows;
+    data.filter = filter.rows;
+    res.json (data);
+  } catch (err) {
+    console.error (err);
+  }
+});
+
+// unanswered questions
+app.get ('/unanswered', async (req, res) => {
+  try {
+    const unanswered = await pool.query (
+      'select id,question,module_id from question where answered = 0'
+    );
+    const filter = await pool.query ('select id,module from module');
+    const data = {};
+    data.unanswered = unanswered.rows;
+    data.filter = filter.rows;
+    res.json (data);
+  } catch (err) {
+    console.error (err);
+  }
+});
+// selected question description
+app.get ('/selectedquestionpage/:id', async (req, res) => {
+  const id = req.params.id;
+  const data = {};
+  try {
+    const selectedquestion = await pool.query (
+      `select  question.id, question.question_title, question.question,to_char (question.question_date, 'DD-MM-YYYY') as question_date,question.answered,users.name from question inner join users on users.id = question.users_id where question.id =$1 `,
+      [id]
+    );
+    const selectedquestion_answer = await pool.query (
+      `select answer.answer,answer.users_id,to_char(answer.answer_date, 'DD-MM-YYYY') as answer_date from answer inner join users on users.id = answer.users_id where answer.question_id = $1`,
+      [id]
+    );
+    data.question = selectedquestion.rows;
+    data.answer = selectedquestion_answer.rows;
+    res.json (data);
+  } catch (err) {
+    console.error (err);
+  }
+});
+
+  //SIGNUP
+  app.post ('/register', (req, res) => {
+    
+  const {username, email, password, confirm } = req.body;
+
+  let errorArray = [];
+
+  !username || !email || !password || !confirm && errorArray.push({message: "Please enter all fields"});
+  password.length < 5 && errorArray.push({message: "Password should be at least 5 characters"});
+  password !== confirm && errorArray.push({message: "Passwords do not match"});
+
+  if(errorArray.length > 0){
+    res.send({errorArray});
+
+  }else{
+  
+  // let hashedPassword = await bcrypt.hash(password, 10);
+  // console.log(hashedPassword);
+
+    pool.query(`insert into users (name, email, password) values ($1, $2, $3)`, 
+    [username, email, password], (error, result)=> {
+        console.log(error, result);
+
+        if(error){
+          res.status(400).send({error: "Database connection not established!"});
+        }
+
+        if(result){
+          res.status(200).send({success: true, message: "Registration successfull. Please login"});
+        }else{
+          res.status(401).send({success: false});
+        }
+
+      })
+
+}
+  
+  
+
+
+ 
+
+});
+
+//LOGIN
+app.post ('/login', (req, res) => {
+  const {username, password} = req.body;
+
+  pool.query (
+    `select * from users where name=$1 and password=$2`,
+    [username, password],
+    (error, result) => {
+      if (error) {
+        res.status (400).send ({error: 'Database connection not established!'});
+      }
+
+
+      if(result.rows.length > 0){
+         res.send({success: true, message: `Welcome ${username}` });
+      }else{
+         // res.status(401).send({message: "Wrong username/password combination"});
+          res.status(401).json({success: false, message: "Invalid username/password. Please register or try again"});
+
+      }
+    }
+  )
 });
 
 // this End point returns name, answered and unanswered questions for a particular user from their id.
