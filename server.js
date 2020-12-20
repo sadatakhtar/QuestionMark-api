@@ -168,7 +168,6 @@ app.post ('/login', (req, res) => {
         res.status (400).send ({error: 'Database connection not established!'});
       }
 
-
       if(result.rows.length > 0){
          res.send({success: true, message: `Welcome ${username}` });
       }else{
