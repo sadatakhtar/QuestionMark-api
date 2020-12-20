@@ -135,11 +135,11 @@ app.get ('/selectedquestionpage/:id', async (req, res) => {
 
   }else{
   
-  let hashedPassword = await bcrypt.hash(password, 10);
-  console.log(hashedPassword);
+  // let hashedPassword = await bcrypt.hash(password, 10);
+  // console.log(hashedPassword);
 
     pool.query(`insert into users (name, email, password) values ($1, $2, $3)`, 
-    [username, email, hashedPassword], (error, result)=> {
+    [username, email, password], (error, result)=> {
         console.log(error, result);
 
         if(error){
@@ -176,7 +176,7 @@ app.post ('/login', (req, res) => {
       }
 
 
-      if(result){
+      if(result.rows.length > 0){
          res.send({success: true, message: `Welcome ${username}` });
       }else{
          // res.status(401).send({message: "Wrong username/password combination"});
