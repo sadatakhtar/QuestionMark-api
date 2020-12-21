@@ -40,7 +40,7 @@ if (process.env.NODE_ENV === 'production') {
 
 // middleware
 app.use (cors ());
-app.use (express.json ()); //allow use to access request.body
+app.use (express.json ()); //allow use to  access request.body
 
 //ROUTES
 app.get ('/', (req, res) => {
