@@ -44,6 +44,7 @@ app.use (express.json ()); //allow use to access request.body
 
 //ROUTES
 app.get ('/', (req, res) => {
+  console.log ('hi');
   res.send ('Homepage here');
 });
 
@@ -59,8 +60,7 @@ app.get ('/allquestions', async (req, res) => {
     const data = {};
     data.allquestions = allquestions.rows;
     data.filter = filter.rows;
-    data.q_answers = q_answers.rows;
-
+    data.q_answers = q_answers;
     res.json (data);
   } catch (err) {
     console.error (err);
@@ -119,53 +119,47 @@ app.get ('/selectedquestionpage/:id', async (req, res) => {
   }
 });
 
-//SIGNUP
-app.post ('/register', (req, res) => {
-  const {username, email, password, confirm} = req.body;
-
+  //SIGNUP
+  app.post ('/register', (req, res) => {
+    
+  const {username, email, password, confirm } = req.body;
 
   let errorArray = [];
 
-  !username ||
-    !email ||
-    !password ||
-    (!confirm && errorArray.push ({message: 'Please enter all fields'}));
-  password.length < 5 &&
-    errorArray.push ({message: 'Password should be at least 5 characters'});
-  password !== confirm && errorArray.push ({message: 'Passwords do not match'});
+  !username || !email || !password || !confirm && errorArray.push({message: "Please enter all fields"});
+  password.length < 5 && errorArray.push({message: "Password should be at least 5 characters"});
+  password !== confirm && errorArray.push({message: "Passwords do not match"});
 
-  if (errorArray.length > 0) {
-    res.send ({errorArray});
-  } else {
-    // let hashedPassword = await bcrypt.hash(password, 10);
-    // console.log(hashedPassword);
+  if(errorArray.length > 0){
+    res.send({errorArray});
 
-    pool.query (
-      `insert into users (name, email, password) values ($1, $2, $3)`,
-      [username, email, password],
-      (error, result) => {
-        console.log (error, result);
+  }else{
+  
+  // let hashedPassword = await bcrypt.hash(password, 10);
+  // console.log(hashedPassword);
 
-        if (error) {
-          res
-            .status (400)
-            .send ({error: 'Database connection not established!'});
+    pool.query(`insert into users (name, email, password) values ($1, $2, $3)`, 
+    [username, email, password], (error, result)=> {
+        console.log(error, result);
+
+        if(error){
+          res.status(400).send({error: "Database connection not established!"});
         }
 
-        if (result) {
-          res
-            .status (200)
-            .send ({
-              success: true,
-              message: 'Registration successfull. Please login',
-            });
-        } else {
-          res.status (401).send ({success: false});
+        if(result){
+          res.status(200).send({success: true, message: "Registration successfull. Please login"});
+        }else{
+          res.status(401).send({success: false});
         }
-        
-      }
-    );
-  }
+
+      })
+
+}
+  
+  
+
+
+ 
 
 });
 
@@ -181,52 +175,16 @@ app.post ('/login', (req, res) => {
         res.status (400).send ({error: 'Database connection not established!'});
       }
 
-      if (result.rows.length > 0) {
-        res.send ({success: true, message: `Welcome ${username}`});
-      } else {
-        // res.status(401).send({message: "Wrong username/password combination"});
-        res
-          .status (401)
-          .json ({
-            success: false,
-            message: 'Invalid username/password. Please register or try again',
-          });
+
+      if(result.rows.length > 0){
+         res.send({success: true, message: `Welcome ${username}` });
+      }else{
+         // res.status(401).send({message: "Wrong username/password combination"});
+          res.status(401).json({success: false, message: "Invalid username/password. Please register or try again"});
+
       }
     }
-  );
-});
-
-// this End point returns name, answered and unanswered questions for a particular user from their id.
-app.get('/ask-question/:user_id',async(req,res)=>{
-  let user_id=req.params.user_id;
-  let userObj={};
-
-  const name=await pool.query(' select name from users where id=$1',[user_id])
-  userObj.name=name.rows;
-
-  const answeredQuestions= await pool.query('select question from question where answered =1 and users_id=$1',[user_id])
-  userObj.answeredQuestions=answeredQuestions.rows;
-
-  const unAnsweredQuestions= await pool.query('select question from question where answered =0 and users_id=$1',[user_id])
-  userObj.unAnsweredQuestions=unAnsweredQuestions.rows;
-
-  res.json(userObj);
-});
-
-
-app.get("/modules", async (req,res) =>{
-  let moduleQuery = await pool.query("select module from module")
-  let modules=moduleQuery.rows;
-  if(typeof modules!=undefined)
-    res.json(modules)
-  else
-    res.send("Not working")  
-});
-
-app.post("/ask-question",async (req,res)=>{
-  const quesObj=req.body;
-  let askQuestionQuery = await pool.query("insert into question(question_title,question,module_id,users_id,question_date,answered) values($1,$2,$3,$4,$5,$6)",[quesObj.question_title,quesObj.question,quesObj.module_id,quesObj.users_id,quesObj.question_date,quesObj.answered])
-  res.json("Values have been inserted")
+  )
 });
 
 //SERVER LISTEN
