@@ -59,7 +59,8 @@ app.get ('/allquestions', async (req, res) => {
     const data = {};
     data.allquestions = allquestions.rows;
     data.filter = filter.rows;
-    data.q_answers = q_answers;
+    data.q_answers = q_answers.rows;
+
     res.json (data);
   } catch (err) {
     console.error (err);
@@ -118,6 +119,7 @@ app.get ('/selectedquestionpage/:id', async (req, res) => {
   }
 });
 
+
   //SIGNUP
   app.post ('/register', (req, res) => {
     
@@ -155,11 +157,6 @@ app.get ('/selectedquestionpage/:id', async (req, res) => {
 
 }
   
-  
-
-
- 
-
 });
 
 //LOGIN
@@ -212,7 +209,6 @@ app.get("/modules", async (req,res) =>{
   else
     res.send("Not working")  
 });
-
 
 app.post("/ask-question",async (req,res)=>{
   const quesObj=req.body;
