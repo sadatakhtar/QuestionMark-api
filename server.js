@@ -157,7 +157,7 @@ app.post ('/register', (req, res) => {
             .status (200)
             .send ({
               success: true,
-              message: 'Registration successfull. Please login',
+              message: ' Registration successfull. Please login',
             });
         } else {
           res.status (401).send ({success: false});
