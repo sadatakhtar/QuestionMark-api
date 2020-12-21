@@ -44,7 +44,6 @@ app.use (express.json ()); //allow use to access request.body
 
 //ROUTES
 app.get ('/', (req, res) => {
-  console.log ('hi');
   res.send ('Homepage here');
 });
 
@@ -60,7 +59,8 @@ app.get ('/allquestions', async (req, res) => {
     const data = {};
     data.allquestions = allquestions.rows;
     data.filter = filter.rows;
-    data.q_answers = q_answers;
+    data.q_answers = q_answers.rows;
+
     res.json (data);
   } catch (err) {
     console.error (err);
@@ -123,6 +123,7 @@ app.get ('/selectedquestionpage/:id', async (req, res) => {
 app.post ('/register', (req, res) => {
   const {username, email, password, confirm} = req.body;
 
+
   let errorArray = [];
 
   !username ||
@@ -161,9 +162,11 @@ app.post ('/register', (req, res) => {
         } else {
           res.status (401).send ({success: false});
         }
+        
       }
     );
   }
+
 });
 
 //LOGIN
@@ -191,6 +194,39 @@ app.post ('/login', (req, res) => {
       }
     }
   );
+});
+
+// this End point returns name, answered and unanswered questions for a particular user from their id.
+app.get('/ask-question/:user_id',async(req,res)=>{
+  let user_id=req.params.user_id;
+  let userObj={};
+
+  const name=await pool.query(' select name from users where id=$1',[user_id])
+  userObj.name=name.rows;
+
+  const answeredQuestions= await pool.query('select question from question where answered =1 and users_id=$1',[user_id])
+  userObj.answeredQuestions=answeredQuestions.rows;
+
+  const unAnsweredQuestions= await pool.query('select question from question where answered =0 and users_id=$1',[user_id])
+  userObj.unAnsweredQuestions=unAnsweredQuestions.rows;
+
+  res.json(userObj);
+});
+
+
+app.get("/modules", async (req,res) =>{
+  let moduleQuery = await pool.query("select module from module")
+  let modules=moduleQuery.rows;
+  if(typeof modules!=undefined)
+    res.json(modules)
+  else
+    res.send("Not working")  
+});
+
+app.post("/ask-question",async (req,res)=>{
+  const quesObj=req.body;
+  let askQuestionQuery = await pool.query("insert into question(question_title,question,module_id,users_id,question_date,answered) values($1,$2,$3,$4,$5,$6)",[quesObj.question_title,quesObj.question,quesObj.module_id,quesObj.users_id,quesObj.question_date,quesObj.answered])
+  res.json("Values have been inserted")
 });
 
 //SERVER LISTEN
