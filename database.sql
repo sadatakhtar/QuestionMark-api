@@ -40,6 +40,7 @@ answer_date DATE
 
 INSERT INTO users(name,email,password) VALUES('Akhil','khieth@yahoo.com',' $2b$10$TKUAzbf516ou/yWRqNZFXephWMvj0..uP/3vJUGg2NG3GSMED80xa');
 INSERT INTO users(name,email,password) VALUES('Laura','Lora@yahoo.com',' $2b$10$6HBswsNlRkwOOfNOs0pBG.VxDKY8s4pjXbIsZhn2H01D6A7ReLEza');
+INSERT INTO users(name,email,password) VALUES('Wahab','Wahab@yahoo.com',' $2b$10$6HBswsNlRkwOOfNOs0pBG.VxDKY8s4pjXbIsZhn2H01D6A7ReLEza');
 INSERT INTO users(name,email,password) VALUES('Sadat','sadat@yahoo.com',' $2b$10$hFFPVUlRVXgLwsJ0RU8Tueg/awvz.MPD270QeecW.qCtNvX/aWat2');
 INSERT INTO users(name,email,password) VALUES('Davinder','davinder@yahoo.com',' $2b$10$RAWB8u5qVkC2V2mD5Al1jOF9nQfMWIoY7Y1WRSZ53S.N7C0H/Fcpm');
 INSERT INTO users(name,email,password) VALUES('Hiba','hiba@yahoo.com',' $2b$10$dmm9x4XcBFPPqz5WqTGIUeu3DqzHEHRCU/MI01Ru0ihwuAvD99UGa');
@@ -163,7 +164,57 @@ Also keep in your mind that this error is mostly caused by import/export issues.
 ',1,'03/01/2020');
 
 
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('Rendering a React component with logical && vs Ternary operator','When making a conditional rendering, the most common ways are using ternary operator or logical && operator while exploiting its short circuit evaluation.
+My question is which one is preferred in tems of performance.
 
+const isTrue = /* true or false */
+
+const ConditionalRendering = () => (
+
+<>
+
+{isTrue && <Component />}
+
+{isTrue ? <Component /> : null}
+
+</> );',4,6,'03/01/2020',1);
+
+INSERT INTO answer(question_id,answer,users_id,answer_date) VALUES(6,' I guess, both cases are the same. As per the React documentation: 
+
+false, null, undefined and true are valid children. They simply don''t render. 
+
+Which means this doesn''t affect the performance. But most developers prefer && to make their code pretty. ',2,'03/01/2020');
+
+
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('What is causing undefined in my code?','I''ve recently started learning javascript and I am working on a for loop. But it throws undefined error.
+
+Here is my code
+
+var message;
+
+for (var songs = 0; songs < playlist.length; songs++) {
+
+message += ''\n'' + (songs+1) + ''. '' + playlist[songs] + ''\n'';
+
+}
+
+alert(message);',3,6,'02/01/2020',1);
+
+
+INSERT INTO answer(question_id,answer,users_id,answer_date) VALUES(7,'You haven''t initialized your message variable with a value, so it is undefined. 
+
+  Set it to an initial value, like so: 
+
+var message = '';',3,'03/01/2020');
+
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('What do these three dots in React do?','What does the ... do in this React (using JSX) code and what is it called?
+
+<Modal {...this.props} title=''Modal heading'' animation={false}>',4,5,'03/01/2020',0);
+
+
+
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('What is the best way to create a title in HTML?','I want to add a title to my website. Whats the best way to achieve that?',2,3,'01/01/2020',1);
+INSERT INTO answer(question_id,answer,users_id,answer_date) VALUES(9,'Use the h1 tag',2,'01/01/2020');
 
 
 INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('Git','what is git',1,3,'01/01/2020',0);
@@ -173,7 +224,6 @@ INSERT INTO question(question_title,question,module_id,users_id,question_date,an
 INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('Node','what is NodeJs',5,5,'04/01/2020',0);
 INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('SQL','what is SQL',6,1,'01/05/2020',0);
 INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('MongoDB','what is MongDB',7,2,'05/01/2020',0);
-
 
 
 INSERT INTO answer(question_id,answer,users_id,answer_date) VALUES(2,'HTML stands for Hyper Text Markup Language',2,'01/01/2020');
