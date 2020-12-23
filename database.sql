@@ -55,20 +55,20 @@ INSERT INTO module(module) VALUES('MongoDB');
 
 
 INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('How do I undo the most recent local commits in Git?','I accidentally committed the wrong files to Git, but didn''t push the commit to the server yet.
-How can I undo those commits from the local repository?',1,3,'23/01/2020',0);
+How can I undo those commits from the local repository?',1,3,'03/11/2020',0);
 
 INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('How can I horizontally center a <div> within another <div> using CSS?','<div id="outer">
 
 <div id="inner">Foo foo</div>
 
-</div>',2,5,'16/09/2020',1);
+</div>',2,5,'12/10/2020',1);
 
 INSERT INTO answer(question_id,answer,users_id,answer_date) VALUES(2,'You can apply this CSS to the inner <div>:
 
 #inner {
 width: 50%;
 margin: 0 auto;
-}',2,'17/09/2020');
+}',2,'17/10/2020');
 
 
 INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('How can I remove a specific item from an array?','I have an array of numbers and I''m using the .push() method to add elements to it.
