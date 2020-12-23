@@ -50,7 +50,7 @@ app.get ('/', (req, res) => {
 app.get ('/allquestions', async (req, res) => {
   try {
     const allquestions = await pool.query (
-      'select id, module_id,question_title, question from question'
+      'select id, module_id,question_title, question,answers,views,rate from question'
     );
     const filter = await pool.query ('select id,module from module');
     const q_answers = await pool.query (
@@ -71,7 +71,7 @@ app.get ('/allquestions', async (req, res) => {
 app.get ('/answered', async (req, res) => {
   try {
     const answered = await pool.query (
-      'select answer.question_id,question.question,question.answered,question.module_id,answer.answer from question inner join answer on question.id = answer.question_id'
+      'select answer.question_id,question.question,question.answers,question.module_id,answer.answer from question inner join answer on question.id = answer.question_id'
     );
     const filter = await pool.query ('select id,module from module');
     const data = {};
@@ -87,7 +87,7 @@ app.get ('/answered', async (req, res) => {
 app.get ('/unanswered', async (req, res) => {
   try {
     const unanswered = await pool.query (
-      'select id,question,module_id from question where answered = 0'
+      'select id,question,module_id from question where answers= 0'
     );
     const filter = await pool.query ('select id,module from module');
     const data = {};
@@ -104,7 +104,7 @@ app.get ('/selectedquestionpage/:id', async (req, res) => {
   const data = {};
   try {
     const selectedquestion = await pool.query (
-      `select  question.id, question.question_title, question.question,to_char (question.question_date, 'DD-MM-YYYY') as question_date,question.answered,users.name from question inner join users on users.id = question.users_id where question.id =$1 `,
+      `select  question.id, question.question_title, question.question,to_char (question.question_date, 'DD-MM-YYYY') as question_date,question.answers,users.name from question inner join users on users.id = question.users_id where question.id =$1 `,
       [id]
     );
     const selectedquestion_answer = await pool.query (
@@ -122,7 +122,6 @@ app.get ('/selectedquestionpage/:id', async (req, res) => {
 //SIGNUP
 app.post ('/register', (req, res) => {
   const {username, email, password, confirm} = req.body;
-
 
   let errorArray = [];
 
@@ -153,20 +152,16 @@ app.post ('/register', (req, res) => {
         }
 
         if (result) {
-          res
-            .status (200)
-            .send ({
-              success: true,
-              message: ' Registration successfull. Please login',
-            });
+          res.status (200).send ({
+            success: true,
+            message: ' Registration successfull. Please login',
+          });
         } else {
           res.status (401).send ({success: false});
         }
-        
       }
     );
   }
-
 });
 
 //LOGIN
@@ -185,48 +180,61 @@ app.post ('/login', (req, res) => {
         res.send ({success: true, message: `Welcome ${username}`});
       } else {
         // res.status(401).send({message: "Wrong username/password combination"});
-        res
-          .status (401)
-          .json ({
-            success: false,
-            message: 'Invalid username/password. Please register or try again',
-          });
+        res.status (401).json ({
+          success: false,
+          message: 'Invalid username/password. Please register or try again',
+        });
       }
     }
   );
 });
 
 // this End point returns name, answered and unanswered questions for a particular user from their id.
-app.get('/ask-question/:user_id',async(req,res)=>{
-  let user_id=req.params.user_id;
-  let userObj={};
+app.get ('/ask-question/:user_id', async (req, res) => {
+  let user_id = req.params.user_id;
+  let userObj = {};
 
-  const name=await pool.query(' select name from users where id=$1',[user_id])
-  userObj.name=name.rows;
+  const name = await pool.query (' select name from users where id=$1', [
+    user_id,
+  ]);
+  userObj.name = name.rows;
 
-  const answeredQuestions= await pool.query('select question from question where answered =1 and users_id=$1',[user_id])
-  userObj.answeredQuestions=answeredQuestions.rows;
+  const answeredQuestions = await pool.query (
+    'select question from question where answers >0 and users_id=$1',
+    [user_id]
+  );
+  userObj.answeredQuestions = answeredQuestions.rows;
 
-  const unAnsweredQuestions= await pool.query('select question from question where answered =0 and users_id=$1',[user_id])
-  userObj.unAnsweredQuestions=unAnsweredQuestions.rows;
+  const unAnsweredQuestions = await pool.query (
+    'select question from question where answers =0 and users_id=$1',
+    [user_id]
+  );
+  userObj.unAnsweredQuestions = unAnsweredQuestions.rows;
 
-  res.json(userObj);
+  res.json (userObj);
 });
 
-
-app.get("/modules", async (req,res) =>{
-  let moduleQuery = await pool.query("select module from module")
-  let modules=moduleQuery.rows;
-  if(typeof modules!=undefined)
-    res.json(modules)
-  else
-    res.send("Not working")  
+app.get ('/modules', async (req, res) => {
+  let moduleQuery = await pool.query ('select module from module');
+  let modules = moduleQuery.rows;
+  if (typeof modules != undefined) res.json (modules);
+  else res.send ('Not working');
 });
 
-app.post("/ask-question",async (req,res)=>{
-  const quesObj=req.body;
-  let askQuestionQuery = await pool.query("insert into question(question_title,question,module_id,users_id,question_date,answered) values($1,$2,$3,$4,$5,$6)",[quesObj.question_title,quesObj.question,quesObj.module_id,quesObj.users_id,quesObj.question_date,quesObj.answered])
-  res.json("Values have been inserted")
+app.post ('/ask-question', async (req, res) => {
+  const quesObj = req.body;
+  let askQuestionQuery = await pool.query (
+    'insert into question(question_title,question,module_id,users_id,question_date,answers) values($1,$2,$3,$4,$5,$6)',
+    [
+      quesObj.question_title,
+      quesObj.question,
+      quesObj.module_id,
+      quesObj.users_id,
+      quesObj.question_date,
+      quesObj.answers,
+    ]
+  );
+  res.json ('Values have been inserted');
 });
 
 //SERVER LISTEN

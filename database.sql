@@ -24,7 +24,7 @@ question TEXT NOT NULL,
 module_id  INT REFERENCES module(id),
 users_id  INT REFERENCES users(id),
 question_date DATE NOT NULL,
-answered INT DEFAULT 0,
+answers INT DEFAULT 0,
 views INT DEFAULT 0 ,
 rate INT DEFAULT 0 
 );
