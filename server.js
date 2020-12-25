@@ -121,26 +121,26 @@ app.get ('/selectedquestionpage/:id', async (req, res) => {
 
 //Post Reply to question by id
 
-app.post ('/replyToQuestion/:id', async (req, res) => {
-  const id = req.params.id;
-  const user = req.params.user;
+app.post ('/replyToQuestion', async (req, res) => {
+  const question_id = req.params.question_id;
+  const user_id = req.params.user_id;
   const date = req.params.date;
   const reply = req.params.reply;
 
   try {
     await pool.query (
       'INSERT INTO answer(question_id,answer,users_id,answer_date) VALUES($1,$2,$3,$4)',
-      [id, reply, user, date]
+      [question_id, reply, user_id, date]
     );
   } catch (err) {
     console.error (err);
   }
 });
 
-//SIGNUP
-app.post ('/register', (req, res) => {
   const {username, email, password, confirm} = req.body;
 
+//SIGNUP
+app.post ('/register', (req, res) => {
   let errorArray = [];
 
   !username ||
