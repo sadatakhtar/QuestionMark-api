@@ -137,10 +137,9 @@ app.post ('/replyToQuestion', async (req, res) => {
   }
 });
 
-  const {username, email, password, confirm} = req.body;
-
 //SIGNUP
 app.post ('/register', (req, res) => {
+  const {username, email, password, confirm} = req.body;
   let errorArray = [];
 
   !username ||
