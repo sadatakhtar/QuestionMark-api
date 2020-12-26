@@ -138,13 +138,13 @@ app.post ('/replypage', async (req, res) => {
   const reply = req.body.reply;
 
   try {
-    await pool.query (
-      'INSERT INTO answer(question_id,answer,users_id,answer_date) VALUES($1,$2,$3,$4)',
+    const replyDescription = await pool.query (
+      'INSERT INTO answer(question_id,answer,users_id,answer_date) VALUES($1,$2,$3,$4) RETURNING *',
       [question_id, reply, user_id, date]
     );
+    res.json (replyDescription.rows[0]);
   } catch (err) {
     console.error (err);
-    console.log (req.body);
   }
 });
 
