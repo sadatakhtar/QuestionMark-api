@@ -41,7 +41,7 @@ if (process.env.NODE_ENV === 'production') {
 // middleware
 app.use (cors ());
 app.use (express.json ()); //allow use to  access request.body
-app.use (express.urlencoded ({extended: false}));
+app.use (express.urlencoded ({extended: true}));
 app.use (function (req, res, next) {
   res.header ('Access-Control-Allow-Origin', '*');
   res.header (
