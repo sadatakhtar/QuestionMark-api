@@ -10,7 +10,7 @@ require ('dotenv').config ();
 //because Herohu is responsible for the environment
 //Heroku will provide some variables to apply for our app one of them is PORT .
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 const devConfig = {
   user: process.env.PG_USER,
@@ -121,11 +121,11 @@ app.get ('/selectedquestionpage/:id', async (req, res) => {
 
 //Post Reply to question by id
 
-app.post ('/replyToQuestion', async (req, res) => {
-  const question_id = req.params.question_id;
-  const user_id = req.params.user_id;
-  const date = req.params.date;
-  const reply = req.params.reply;
+app.post ('/replypage', async (req, res) => {
+  const question_id = req.body.question_id;
+  const user_id = req.body.user_id;
+  const date = req.body.date;
+  const reply = req.body.reply;
 
   try {
     await pool.query (
@@ -134,6 +134,7 @@ app.post ('/replyToQuestion', async (req, res) => {
     );
   } catch (err) {
     console.error (err);
+    console.log (req.body);
   }
 });
 
