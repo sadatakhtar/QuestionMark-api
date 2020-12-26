@@ -132,6 +132,7 @@ app.get ('/selectedquestionpage/:id', async (req, res) => {
 //Post Reply to question by id
 
 app.post ('/replypage', async (req, res) => {
+  console.log (req.body);
   const question_id = req.body.question_id;
   const user_id = req.body.user_id;
   const date = req.body.date;
