@@ -149,10 +149,28 @@ app.post ('/replypage', async (req, res) => {
   }
 });
 
+// endpoint for recieving the views and rate
+
 app.get ('/counters', async (req, res) => {
   try {
     const conterData = await pool.query ('select id,views,rate from question');
     res.json (conterData.rows);
+  } catch (err) {
+    console.error (err);
+  }
+});
+
+// endpoint for update the rates
+
+app.put ('/rates', async (req, res) => {
+  const id = req.body.id;
+  const rate = req.body.rate;
+  try {
+    const rates = await pool.query ('UPDATE question SET rate=$1 WHERE id=$2', [
+      rate,
+      id,
+    ]);
+    res.json (rates.rows);
   } catch (err) {
     console.error (err);
   }
