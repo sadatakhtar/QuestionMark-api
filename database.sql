@@ -24,7 +24,9 @@ question TEXT NOT NULL,
 module_id  INT REFERENCES module(id),
 users_id  INT REFERENCES users(id),
 question_date DATE NOT NULL,
-answered INT DEFAULT 0 NOT NULL
+answers INT DEFAULT 0,
+views INT DEFAULT 0 ,
+rate INT DEFAULT 0 
 );
 
 CREATE TABLE answer (
@@ -54,24 +56,24 @@ INSERT INTO module(module) VALUES('MongoDB');
 
 
 
-INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('How do I undo the most recent local commits in Git?','I accidentally committed the wrong files to Git, but didn''t push the commit to the server yet.
-How can I undo those commits from the local repository?',1,3,'23/01/2020',0);
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answers,views,rate) VALUES('How do I undo the most recent local commits in Git?','I accidentally committed the wrong files to Git, but didn''t push the commit to the server yet.
+How can I undo those commits from the local repository?',1,3,'03/11/2020',0,3,1);
 
-INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('How can I horizontally center a <div> within another <div> using CSS?','<div id="outer">
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answers,views,rate) VALUES('How can I horizontally center a <div> within another <div> using CSS?','<div id="outer">
 
 <div id="inner">Foo foo</div>
 
-</div>',2,5,'16/09/2020',1);
+</div>',2,5,'12/10/2020',1,4,3);
 
 INSERT INTO answer(question_id,answer,users_id,answer_date) VALUES(2,'You can apply this CSS to the inner <div>:
 
 #inner {
 width: 50%;
 margin: 0 auto;
-}',2,'17/09/2020');
+}',2,'17/10/2020');
 
 
-INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('How can I remove a specific item from an array?','I have an array of numbers and I''m using the .push() method to add elements to it.
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answers,views,rate) VALUES('How can I remove a specific item from an array?','I have an array of numbers and I''m using the .push() method to add elements to it.
 
 Is there a simple way to remove a specific element from an array?
 
@@ -79,7 +81,7 @@ I''m looking for the equivalent of something like:
 
 array.remove(number);
 
-I have to use core JavaScript. Frameworks are not allowed.',3,4,'02/10/2020',1);
+I have to use core JavaScript. Frameworks are not allowed.',3,4,'02/10/2020',1,9,3);
 
 
 INSERT INTO answer(question_id,answer,users_id,answer_date) VALUES(3,'Find the index of the array element you want to remove using indexOf, and then remove that index with splice.
@@ -97,12 +99,12 @@ array.splice(index, 1);
 console.log(array);
 ',5,'02/10/2020');
 
-INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('What do these three dots in React do?','What does the ... do in React (using JSX) and what is it called?
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answers,views,rate) VALUES('What do these three dots in React do?','What does the ... do in React (using JSX) and what is it called?
 
-<Modal {...this.props} title=''Modal heading'' animation={false}>',4,4,'03/10/2020',0);
+<Modal {...this.props} title=''Modal heading'' animation={false}>',4,4,'03/10/2020',0,7,2);
 
 
-INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES(' TypeError: Object(…) is not a function Reactjs','I am trying to import fillCalendar() to my Calendar component but it throws "TypeError: Object(...) is not a function" error.
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answers,views,rate) VALUES(' TypeError: Object(…) is not a function Reactjs','I am trying to import fillCalendar() to my Calendar component but it throws "TypeError: Object(...) is not a function" error.
 
 Here is my Calendar.js
 
@@ -143,7 +145,7 @@ let leadDayStart = monthArrays[month-1] - monthStart + 1 // Loop out lead date n
 datesArray.push({date: leadDayStart, type: "leadDate", id: "leadDate" + i})
 leadDayStart++
 filledNodes++
-} ',3,4,'02/01/2020',1);
+} ',3,4,'02/01/2020',1,4,2);
 
 
 
@@ -162,7 +164,7 @@ Also keep in your mind that this error is mostly caused by import/export issues.
 ',1,'03/01/2020');
 
 
-INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('Rendering a React component with logical && vs Ternary operator','When making a conditional rendering, the most common ways are using ternary operator or logical && operator while exploiting its short circuit evaluation.
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answers,views,rate) VALUES('Rendering a React component with logical && vs Ternary operator','When making a conditional rendering, the most common ways are using ternary operator or logical && operator while exploiting its short circuit evaluation.
 My question is which one is preferred in tems of performance.
 
 const isTrue = /* true or false */
@@ -175,7 +177,7 @@ const ConditionalRendering = () => (
 
 {isTrue ? <Component /> : null}
 
-</> );',4,6,'03/01/2020',1);
+</> );',4,6,'03/01/2020',1,2,2);
 
 INSERT INTO answer(question_id,answer,users_id,answer_date) VALUES(6,' I guess, both cases are the same. As per the React documentation: 
 
@@ -184,7 +186,7 @@ false, null, undefined and true are valid children. They simply don''t render.
 Which means this doesn''t affect the performance. But most developers prefer && to make their code pretty. ',2,'03/01/2020');
 
 
-INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('What is causing undefined in my code?','I''ve recently started learning javascript and I am working on a for loop. But it throws undefined error.
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answers) VALUES('What is causing undefined in my code?','I''ve recently started learning javascript and I am working on a for loop. But it throws undefined error.
 
 Here is my code
 
@@ -205,23 +207,23 @@ INSERT INTO answer(question_id,answer,users_id,answer_date) VALUES(7,'You haven'
 
 var message = '';',3,'03/01/2020');
 
-INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('What do these three dots in React do?','What does the ... do in this React (using JSX) code and what is it called?
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answers) VALUES('What do these three dots in React do?','What does the ... do in this React (using JSX) code and what is it called?
 
 <Modal {...this.props} title=''Modal heading'' animation={false}>',4,5,'03/01/2020',0);
 
 
 
-INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('What is the best way to create a title in HTML?','I want to add a title to my website. Whats the best way to achieve that?',2,3,'01/01/2020',1);
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answers) VALUES('What is the best way to create a title in HTML?','I want to add a title to my website. Whats the best way to achieve that?',2,3,'01/01/2020',1);
 INSERT INTO answer(question_id,answer,users_id,answer_date) VALUES(9,'Use the h1 tag',2,'01/01/2020');
 
 
-INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('Git','what is git',1,3,'01/01/2020',0);
-INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('HTML','what is HTML',2,3,'01/01/2020',2);
-INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('Js','what is JavaScript',3,4,'02/01/2020',1);
-INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('React','what is React',4,4,'03/01/2020',0);
-INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('Node','what is NodeJs',5,5,'04/01/2020',0);
-INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('SQL','what is SQL',6,1,'01/05/2020',0);
-INSERT INTO question(question_title,question,module_id,users_id,question_date,answered) VALUES('MongoDB','what is MongDB',7,2,'05/01/2020',0);
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answers) VALUES('Git','what is git',1,3,'01/01/2020',0);
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answers) VALUES('HTML','what is HTML',2,3,'01/01/2020',2);
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answers) VALUES('Js','what is JavaScript',3,4,'02/01/2020',1);
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answers) VALUES('React','what is React',4,4,'03/01/2020',0);
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answers) VALUES('Node','what is NodeJs',5,5,'04/01/2020',0);
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answers) VALUES('SQL','what is SQL',6,1,'01/05/2020',0);
+INSERT INTO question(question_title,question,module_id,users_id,question_date,answers) VALUES('MongoDB','what is MongDB',7,2,'05/01/2020',0);
 
 
 INSERT INTO answer(question_id,answer,users_id,answer_date) VALUES(2,'HTML stands for Hyper Text Markup Language',2,'01/01/2020');
