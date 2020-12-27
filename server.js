@@ -149,6 +149,15 @@ app.post ('/replypage', async (req, res) => {
   }
 });
 
+app.get ('/counters', async (req, res) => {
+  try {
+    const conterData = await pool.query ('select id,views,rate from question');
+    res.json (conterData.rows);
+  } catch (err) {
+    console.error (err);
+  }
+});
+
 //SIGNUP
 app.post ('/register', (req, res) => {
   const {username, email, password, confirm} = req.body;
