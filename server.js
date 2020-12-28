@@ -176,7 +176,7 @@ app.put ('/rates', async (req, res) => {
   }
 });
 
-// Endpoint for a user answers
+// Endpoint for getting user answers
 
 app.get ('/userAnswers/:id', async (req, res) => {
   const id = parseInt (req.params.id);
@@ -204,9 +204,10 @@ app.delete ('/userAnswers/:id', async (req, res) => {
   }
 });
 
-//Endoint to edit user answer
+//Endoint to edit user's answer
 
 app.put ('/userAnswers/:id', async (req, res) => {
+  console.log ('body = ' + req.body + 'params-id = ' + req.params.id);
   try {
     const id = req.params.id;
     const answer = req.body.answer;
