@@ -178,7 +178,7 @@ app.put ('/rates', async (req, res) => {
 
 // Endpoint for a user answers
 
-app.get ('userAnswers/:id', async (req, res) => {
+app.get ('/userAnswers/:id', async (req, res) => {
   const id = req.params.id;
   try {
     const answers = await pool.query (
