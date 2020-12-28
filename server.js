@@ -143,7 +143,7 @@ app.post ('/replypage', async (req, res) => {
       'INSERT INTO answer(question_id,answer,users_id,answer_date) VALUES($1,$2,$3,$4) RETURNING *',
       [question_id, reply, user_id, date]
     );
-    res.json (replyDescription.rows[0]);
+    res.json (replyDescription.rows[0]).status (200);
   } catch (err) {
     console.error (err);
   }
@@ -171,6 +171,21 @@ app.put ('/rates', async (req, res) => {
       id,
     ]);
     res.json (rates.rows);
+  } catch (err) {
+    console.error (err);
+  }
+});
+
+// Endpoint for a user answers
+
+app.get ('userAnswers/:id', async (req, res) => {
+  const id = req.params.id;
+  try {
+    const answers = await pool.query (
+      'select question.question,answer.answer from question inner join answer on question.id = answer.question_id where answer.users_id = $',
+      [id]
+    );
+    res.json (answers);
   } catch (err) {
     console.error (err);
   }
