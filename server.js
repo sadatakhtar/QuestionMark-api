@@ -187,7 +187,7 @@ app.get ('/userAnswers/:id', async (req, res) => {
     );
     res.json (answers.rows);
   } catch (err) {
-    console.error (err.message);
+    console.error (err);
   }
 });
 
@@ -200,7 +200,7 @@ app.delete ('/userAnswers/:id', async (req, res) => {
     ]);
     res.json ('Answer was deleted');
   } catch (err) {
-    console.error (err.message);
+    console.error (err);
   }
 });
 
