@@ -179,7 +179,7 @@ app.put ('/rates', async (req, res) => {
 // Endpoint for a user answers
 
 app.get ('/userAnswers/:id', async (req, res) => {
-  const id = req.params.id;
+  const id = Number (req.params.id);
   try {
     const answers = await pool.query (
       'select question.question,answer.answer from question inner join answer on question.id = answer.question_id where answer.users_id = $',
