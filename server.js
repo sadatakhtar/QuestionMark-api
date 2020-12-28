@@ -73,7 +73,7 @@ app.get ('/allquestions', async (req, res) => {
 
     res.json (data);
   } catch (err) {
-    console.error (err);
+    console.error (err.message);
   }
 });
 
@@ -89,7 +89,7 @@ app.get ('/answered', async (req, res) => {
     data.filter = filter.rows;
     res.json (data);
   } catch (err) {
-    console.error (err);
+    console.error (err.message);
   }
 });
 
@@ -105,7 +105,7 @@ app.get ('/unanswered', async (req, res) => {
     data.filter = filter.rows;
     res.json (data);
   } catch (err) {
-    console.error (err);
+    console.error (err.message);
   }
 });
 // selected question description
@@ -125,7 +125,7 @@ app.get ('/selectedquestionpage/:id', async (req, res) => {
     data.answer = selectedquestion_answer.rows;
     res.json (data);
   } catch (err) {
-    console.error (err);
+    console.error (err.message);
   }
 });
 
@@ -145,7 +145,7 @@ app.post ('/replypage', async (req, res) => {
     );
     res.json (replyDescription.rows[0]).status (200);
   } catch (err) {
-    console.error (err);
+    console.error (err.message);
   }
 });
 
@@ -156,11 +156,11 @@ app.get ('/counters', async (req, res) => {
     const conterData = await pool.query ('select id,views,rate from question');
     res.json (conterData.rows);
   } catch (err) {
-    console.error (err);
+    console.error (err.message);
   }
 });
 
-// endpoint for update the rates
+// endpoint to update the rates
 
 app.put ('/rates', async (req, res) => {
   const id = req.body.id;
@@ -172,7 +172,7 @@ app.put ('/rates', async (req, res) => {
     ]);
     res.json (rates.rows);
   } catch (err) {
-    console.error (err);
+    console.error (err.message);
   }
 });
 
@@ -182,12 +182,25 @@ app.get ('/userAnswers/:id', async (req, res) => {
   const id = parseInt (req.params.id);
   try {
     const answers = await pool.query (
-      'select question.question,answer.answer from question inner join answer on question.id = answer.question_id where answer.users_id = $1',
+      'select answer.id,question.question,answer.answer,question.module_id from question inner join answer on question.id = answer.question_id where answer.users_id = $1',
       [id]
     );
     res.json (answers.rows);
   } catch (err) {
-    console.error (err);
+    console.error (err.message);
+  }
+});
+
+// Endpoint delete a user's answer by id
+app.delete ('/userAnswers/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const deleteAnswer = await pool.query ('delete from answer where id = $1', [
+      id,
+    ]);
+    res.json ('Answer was deleted');
+  } catch (err) {
+    console.error (err.message);
   }
 });
 
