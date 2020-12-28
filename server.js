@@ -187,7 +187,7 @@ app.get ('/userAnswers/:id', async (req, res) => {
     );
     res.json (answers.rows);
   } catch (err) {
-    console.error (err);
+    console.error (err.message);
   }
 });
 
@@ -200,7 +200,23 @@ app.delete ('/userAnswers/:id', async (req, res) => {
     ]);
     res.json ('Answer was deleted');
   } catch (err) {
-    console.error (err);
+    console.error (err.message);
+  }
+});
+
+//Endoint to edit user answer
+
+app.put ('/userAnswers/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const answer = req.body.answer;
+    const updateAnswer = await pool.query (
+      'update answer set answer = $1 where id = $2',
+      [answer, id]
+    );
+    res.json ('Answer updated');
+  } catch (err) {
+    console.error (err.message);
   }
 });
 
