@@ -207,7 +207,7 @@ app.post ('/register', (req, res) => {
   if (errorArray.length > 0) {
     res.send ({errorArray});
   } else {
-    // let hashedPassword = await bcrypt.hash(password, 10);
+    // let hashedPassword = await bcrypt.hash (password, 10);
     // console.log(hashedPassword);
 
     pool.query (
