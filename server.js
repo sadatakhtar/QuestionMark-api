@@ -143,6 +143,11 @@ app.post ('/replypage', async (req, res) => {
       'INSERT INTO answer(question_id,answer,users_id,answer_date) VALUES($1,$2,$3,$4) RETURNING *',
       [question_id, reply, user_id, date]
     );
+
+    const increaseAnswers = await pool.query (
+      'insert into question(answers) values ('
+    );
+
     res.json (replyDescription.rows[0]).status (200);
   } catch (err) {
     console.error (err.message);
@@ -183,6 +188,21 @@ app.get ('/userAnswers/:id', async (req, res) => {
   try {
     const answers = await pool.query (
       'select answer.id,question.question,answer.answer,question.module_id from question inner join answer on question.id = answer.question_id where answer.users_id = $1',
+      [id]
+    );
+    res.json (answers.rows);
+  } catch (err) {
+    console.error (err.message);
+  }
+});
+
+// Endpoint for getting user asked questions
+
+app.get ('/userAsked/:id', async (req, res) => {
+  const id = parseInt (req.params.id);
+  try {
+    const userAskedQ = await pool.query (
+      'select question.id,question.question, question.answers,answer.id,answer.answer from question inner join answer on question.users_id = answer.users_id where question.users_id = $1 ',
       [id]
     );
     res.json (answers.rows);
