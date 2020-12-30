@@ -73,7 +73,7 @@ app.get ('/allquestions', async (req, res) => {
 
     res.json (data);
   } catch (err) {
-    console.error (err);
+    console.error (err.message);
   }
 });
 
@@ -89,7 +89,7 @@ app.get ('/answered', async (req, res) => {
     data.filter = filter.rows;
     res.json (data);
   } catch (err) {
-    console.error (err);
+    console.error (err.message);
   }
 });
 
@@ -105,7 +105,7 @@ app.get ('/unanswered', async (req, res) => {
     data.filter = filter.rows;
     res.json (data);
   } catch (err) {
-    console.error (err);
+    console.error (err.message);
   }
 });
 // selected question description
@@ -125,7 +125,7 @@ app.get ('/selectedquestionpage/:id', async (req, res) => {
     data.answer = selectedquestion_answer.rows;
     res.json (data);
   } catch (err) {
-    console.error (err);
+    console.error (err.message);
   }
 });
 
@@ -143,9 +143,15 @@ app.post ('/replypage', async (req, res) => {
       'INSERT INTO answer(question_id,answer,users_id,answer_date) VALUES($1,$2,$3,$4) RETURNING *',
       [question_id, reply, user_id, date]
     );
+
+    const increaseAnswers = await pool.query (
+      'UPDATE question SET answers = answers+1 WHERE id = $1',
+      [question_id]
+    );
+
     res.json (replyDescription.rows[0]).status (200);
   } catch (err) {
-    console.error (err);
+    console.error (err.message);
   }
 });
 
@@ -156,11 +162,11 @@ app.get ('/counters', async (req, res) => {
     const conterData = await pool.query ('select id,views,rate from question');
     res.json (conterData.rows);
   } catch (err) {
-    console.error (err);
+    console.error (err.message);
   }
 });
 
-// endpoint for update the rates
+// endpoint to update the rates
 
 app.put ('/rates', async (req, res) => {
   const id = req.body.id;
@@ -172,22 +178,107 @@ app.put ('/rates', async (req, res) => {
     ]);
     res.json (rates.rows);
   } catch (err) {
-    console.error (err);
+    console.error (err.message);
   }
 });
 
-// Endpoint for a user answers
+// Endpoint for getting user answers
 
-app.get ('userAnswers/:id', async (req, res) => {
-  const id = req.params.id;
+app.get ('/userAnswers/:id', async (req, res) => {
+  const id = parseInt (req.params.id);
   try {
     const answers = await pool.query (
-      'select question.question,answer.answer from question inner join answer on question.id = answer.question_id where answer.users_id = $',
+      'select answer.id,question.question,answer.answer,question.module_id from question inner join answer on question.id = answer.question_id where answer.users_id = $1',
       [id]
     );
-    res.json (answers);
+    res.json (answers.rows);
   } catch (err) {
-    console.error (err);
+    console.error (err.message);
+  }
+});
+
+// Endpoint for getting user asked questions
+
+app.get ('/userAsked/:id', async (req, res) => {
+  const id = parseInt (req.params.id);
+  try {
+    const userAskedQ = await pool.query (
+      'select question.id,question.question, question.answers,answer.id,answer.answer from question inner join answer on question.users_id = answer.users_id where question.users_id = $1 ',
+      [id]
+    );
+    res.json (answers.rows);
+  } catch (err) {
+    console.error (err.message);
+  }
+});
+
+// Endpoint delete a user's answer by id
+app.delete ('/userAnswers/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const deleteAnswer = await pool.query ('delete from answer where id = $1', [
+      id,
+    ]);
+    const decreaseAnswers = await pool.query (
+      'UPDATE question SET answers = answers-1 WHERE id = $1',
+      [question_id]
+    );
+
+    res.json ('Answer was deleted');
+  } catch (err) {
+    console.error (err.message);
+  }
+});
+
+// Endpoint delete a user's question by id
+app.delete ('/userAsked/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const deleteQuestion = await pool.query (
+      'delete from question where id = $1',
+      [id]
+    );
+    const deleteAnswers = await pool.query (
+      'delete from answer where question_id = $1',
+      [id]
+    );
+    res.json ('Question was deleted');
+  } catch (err) {
+    console.error (err.message);
+  }
+});
+
+//Endoint to edit user's answer
+
+app.put ('/userAnswers/:id', async (req, res) => {
+  console.log ('body = ' + req.body + 'params-id = ' + req.params.id);
+  try {
+    const id = req.params.id;
+    const answer = req.body.answer;
+    const updateAnswer = await pool.query (
+      'update answer set answer = $1 where id = $2',
+      [answer, id]
+    );
+    res.json ('Answer updated');
+  } catch (err) {
+    console.error (err.message);
+  }
+});
+
+//Endoint to edit user's question
+
+app.put ('/userAsked/:id', async (req, res) => {
+  console.log ('body = ' + req.body + 'params-id = ' + req.params.id);
+  try {
+    const id = req.params.id;
+    const question = req.body.question;
+    const updateQuestion = await pool.query (
+      'update question set question = $1 where id = $2',
+      [question, id]
+    );
+    res.json ('Question updated');
+  } catch (err) {
+    console.error (err.message);
   }
 });
 
@@ -207,7 +298,7 @@ app.post ('/register', (req, res) => {
   if (errorArray.length > 0) {
     res.send ({errorArray});
   } else {
-    // let hashedPassword = await bcrypt.hash(password, 10);
+    // let hashedPassword = await bcrypt.hash (password, 10);
     // console.log(hashedPassword);
 
     pool.query (
