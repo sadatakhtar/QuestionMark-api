@@ -145,7 +145,8 @@ app.post ('/replypage', async (req, res) => {
     );
 
     const increaseAnswers = await pool.query (
-      'insert into question(answers) values ('
+      'UPDATE question SET answers = answers+1 WHERE id = $1',
+      [question_id]
     );
 
     res.json (replyDescription.rows[0]).status (200);
@@ -218,7 +219,30 @@ app.delete ('/userAnswers/:id', async (req, res) => {
     const deleteAnswer = await pool.query ('delete from answer where id = $1', [
       id,
     ]);
+    const decreaseAnswers = await pool.query (
+      'UPDATE question SET answers = answers-1 WHERE id = $1',
+      [question_id]
+    );
+
     res.json ('Answer was deleted');
+  } catch (err) {
+    console.error (err.message);
+  }
+});
+
+// Endpoint delete a user's question by id
+app.delete ('/userAsked/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const deleteQuestion = await pool.query (
+      'delete from question where id = $1',
+      [id]
+    );
+    res.json ('Question was deleted');
+    const deleteAnswers = await pool.query (
+      'delete from answer where question_id = $1',
+      [id]
+    );
   } catch (err) {
     console.error (err.message);
   }
