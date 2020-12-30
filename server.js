@@ -234,6 +234,10 @@ app.delete ('/userAnswers/:id', async (req, res) => {
 app.delete ('/userAsked/:id', async (req, res) => {
   try {
     const id = req.params.id;
+    const deleteAllAnswers = await pool.query (
+      'delete from answer where question_id = $1',
+      [id]
+    );
     const deleteQuestion = await pool.query (
       'delete from question where id = $1',
       [id]
