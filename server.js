@@ -177,7 +177,7 @@ app.post ('/login', (req, res) => {
 
 
       if(result){
-         res.send({success: true, message: `Welcome ${username}` });
+         res.send({success: true, message: `Welcome ${username}` , user_id: `${users.id}` });
       }else{
          // res.status(401).send({message: "Wrong username/password combination"});
           res.status(401).json({success: false, message: "Invalid username/password. Please register or try again"});
