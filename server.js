@@ -203,10 +203,10 @@ app.get ('/userAsked/:id', async (req, res) => {
   const id = parseInt (req.params.id);
   try {
     const userAskedQ = await pool.query (
-      'select question.id,question.question, question.answers,answer.id,answer.answer from question inner join answer on question.users_id = answer.users_id where question.users_id = $1 ',
+      'select question.id,question.question, question.answers,answer.answer from question inner join answer on question.users_id = answer.users_id where question.users_id = $1 ',
       [id]
     );
-    res.json (answers.rows);
+    res.json (userAskedQ.rows);
   } catch (err) {
     console.error (err.message);
   }
@@ -234,6 +234,10 @@ app.delete ('/userAnswers/:id', async (req, res) => {
 app.delete ('/userAsked/:id', async (req, res) => {
   try {
     const id = req.params.id;
+    const deleteAllAnswers = await pool.query (
+      'delete from answer where question_id = $1',
+      [id]
+    );
     const deleteQuestion = await pool.query (
       'delete from question where id = $1',
       [id]
@@ -268,7 +272,7 @@ app.put ('/userAnswers/:id', async (req, res) => {
 //Endoint to edit user's question
 
 app.put ('/userAsked/:id', async (req, res) => {
-  console.log ('body = ' + req.body + 'params-id = ' + req.params.id);
+  console.log ('body = ' + req.body.question + 'params-id = ' + req.params.id);
   try {
     const id = req.params.id;
     const question = req.body.question;
