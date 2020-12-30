@@ -206,7 +206,7 @@ app.get ('/userAsked/:id', async (req, res) => {
       'select question.id,question.question, question.answers,answer.id,answer.answer from question inner join answer on question.users_id = answer.users_id where question.users_id = $1 ',
       [id]
     );
-    res.json (answers.rows);
+    res.json (userAskedQ.rows);
   } catch (err) {
     console.error (err.message);
   }
