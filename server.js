@@ -238,11 +238,11 @@ app.delete ('/userAsked/:id', async (req, res) => {
       'delete from question where id = $1',
       [id]
     );
-    res.json ('Question was deleted');
     const deleteAnswers = await pool.query (
       'delete from answer where question_id = $1',
       [id]
     );
+    res.json ('Question was deleted');
   } catch (err) {
     console.error (err.message);
   }
@@ -260,6 +260,23 @@ app.put ('/userAnswers/:id', async (req, res) => {
       [answer, id]
     );
     res.json ('Answer updated');
+  } catch (err) {
+    console.error (err.message);
+  }
+});
+
+//Endoint to edit user's question
+
+app.put ('/userAsked/:id', async (req, res) => {
+  console.log ('body = ' + req.body + 'params-id = ' + req.params.id);
+  try {
+    const id = req.params.id;
+    const question = req.body.question;
+    const updateQuestion = await pool.query (
+      'update question set question = $1 where id = $2',
+      [question, id]
+    );
+    res.json ('Question updated');
   } catch (err) {
     console.error (err.message);
   }
