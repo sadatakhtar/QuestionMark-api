@@ -268,7 +268,7 @@ app.put ('/userAnswers/:id', async (req, res) => {
 //Endoint to edit user's question
 
 app.put ('/userAsked/:id', async (req, res) => {
-  console.log ('body = ' + req.body + 'params-id = ' + req.params.id);
+  console.log ('body = ' + req.body.question + 'params-id = ' + req.params.id);
   try {
     const id = req.params.id;
     const question = req.body.question;
