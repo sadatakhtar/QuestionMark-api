@@ -344,7 +344,7 @@ app.post ('/login', (req, res) => {
 
 
       if (result.rows.length > 0) {
-        res.send ({success: true, message: `Welcome ${username}` , user_id: `${users.id}`});
+        res.send ({success: true, message: `Welcome ${username}` , user_id: `${result.rows[0].id}`});
       } else {
         // res.status(401).send({message: "Wrong username/password combination"});
         res.status (401).json ({
