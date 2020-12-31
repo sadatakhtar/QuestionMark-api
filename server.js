@@ -340,7 +340,7 @@ app.post ('/login', (req, res) => {
     [username, password],
     (error, result) => {
       if (error) {
-        res.status (400).send ({error: 'Database connection not established!'});
+        res.status (400).send ({error: 'Database   not established!'});
       }
 
       if (result.rows.length > 0) {
