@@ -150,7 +150,7 @@ app.post ('/replypage', async (req, res) => {
       [question_id]
     );
 
-    res.json (replyDescription.rows[0]).status (200);
+    res.send (status (200));
   } catch (err) {
     console.error (err.message);
   }
