@@ -77,22 +77,24 @@ app.get ('/allquestions', async (req, res) => {
     console.error (err.message);
   }
 });
-
-// answered questions
-app.get ('/answered', async (req, res) => {
-  try {
-    const answered = await pool.query (
-      'select answer.question_id,question.question,question.question_date,question.answers,question.module_id,answer.answer,answer.answer_date from question inner join answer on question.id = answer.question_id'
-    );
-    const filter = await pool.query ('select id,module from module');
-    const data = {};
-    data.answered = answered.rows;
-    data.filter = filter.rows;
-    res.json (data);
-  } catch (err) {
-    console.error (err.message);
+`select  question.id, question.question_title, question.question,to_char (question.question_date, 'DD-MM-YYYY') as question_date,question.answers,users.name from question inner join users on users.id = question.users_id where question.id =$1 `, app.get (
+  // answered questions
+  '/answered',
+  async (req, res) => {
+    try {
+      const answered = await pool.query (
+        `select answer.question_id,question.question, to_char(question.question_date,'DD-MM-YYYY') as question_date, question.answers,question.module_id,answer.answer, to_char(answer.answer_date,'DD-MM-YYYY') as answer_date from question inner join answer on question.id = answer.question_id`
+      );
+      const filter = await pool.query ('select id,module from module');
+      const data = {};
+      data.answered = answered.rows;
+      data.filter = filter.rows;
+      res.json (data);
+    } catch (err) {
+      console.error (err.message);
+    }
   }
-});
+);
 
 // unanswered questions
 app.get ('/unanswered', async (req, res) => {
