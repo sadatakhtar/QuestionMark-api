@@ -185,6 +185,22 @@ app.put ('/rates', async (req, res) => {
   }
 });
 
+// endpoint to update the views
+
+app.put ('/views', async (req, res) => {
+  const id = req.body.id;
+  const views = req.body.views;
+  try {
+    const viewsRes = await pool.query (
+      'UPDATE question SET views=$1 WHERE id=$2',
+      [views, id]
+    );
+    res.json (viewsRes.rows);
+  } catch (err) {
+    console.error (err.message);
+  }
+});
+
 // Endpoint for getting user answers
 
 app.get ('/userAnswers/:id', async (req, res) => {
