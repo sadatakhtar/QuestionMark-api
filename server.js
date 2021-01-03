@@ -117,7 +117,7 @@ app.get ('/selectedquestionpage/:id', async (req, res) => {
   const data = {};
   try {
     const selectedquestion = await pool.query (
-      `select  question.id, question.question_title, question.question,to_char (question.question_date, 'DD-MM-YYYY') as question_date,question.answers,users.name from question inner join users on users.id = question.users_id where question.id =$1 `,
+      `select  question.id, question.question_title, question.question,to_char (question.question_date, 'DD-MM-YYYY') as question_date,question.answers,question.rate,question.views,users.name from question inner join users on users.id = question.users_id where question.id =$1 `,
       [id]
     );
     const selectedquestion_answer = await pool.query (
