@@ -3,6 +3,7 @@ const app = express ();
 path = require ('path');
 const cors = require ('cors');
 const Pool = require ('pg').Pool;
+const {query} = require ('express');
 require ('dotenv').config ();
 
 // we use process.env to contain our environment variables
@@ -76,28 +77,30 @@ app.get ('/allquestions', async (req, res) => {
     console.error (err.message);
   }
 });
-
-// answered questions
-app.get ('/answered', async (req, res) => {
-  try {
-    const answered = await pool.query (
-      'select answer.question_id,question.question,question.answers,question.module_id,answer.answer from question inner join answer on question.id = answer.question_id'
-    );
-    const filter = await pool.query ('select id,module from module');
-    const data = {};
-    data.answered = answered.rows;
-    data.filter = filter.rows;
-    res.json (data);
-  } catch (err) {
-    console.error (err.message);
+`select  question.id, question.question_title, question.question,to_char (question.question_date, 'DD-MM-YYYY') as question_date,question.answers,users.name from question inner join users on users.id = question.users_id where question.id =$1 `, app.get (
+  // answered questions
+  '/answered',
+  async (req, res) => {
+    try {
+      const answered = await pool.query (
+        `select answer.question_id,question.question, to_char(question.question_date,'DD-MM-YYYY') as question_date, question.answers,question.module_id,answer.answer, to_char(answer.answer_date,'DD-MM-YYYY') as answer_date from question inner join answer on question.id = answer.question_id`
+      );
+      const filter = await pool.query ('select id,module from module');
+      const data = {};
+      data.answered = answered.rows;
+      data.filter = filter.rows;
+      res.json (data);
+    } catch (err) {
+      console.error (err.message);
+    }
   }
-});
+);
 
 // unanswered questions
 app.get ('/unanswered', async (req, res) => {
   try {
     const unanswered = await pool.query (
-      'select id,question,module_id from question where answers= 0'
+      `select question.id,question.question,question.module_id,to_char(question.question_date, 'DD-MM-YYYY') as question_date ,users.name from question inner join users on users.id = question.users_id where question.answers= 0`
     );
     const filter = await pool.query ('select id,module from module');
     const data = {};
@@ -114,11 +117,11 @@ app.get ('/selectedquestionpage/:id', async (req, res) => {
   const data = {};
   try {
     const selectedquestion = await pool.query (
-      `select  question.id, question.question_title, question.question,to_char (question.question_date, 'DD-MM-YYYY') as question_date,question.answers,users.name from question inner join users on users.id = question.users_id where question.id =$1 `,
+      `select  question.id, question.question_title, question.question,to_char (question.question_date, 'DD-MM-YYYY') as question_date,question.answers,question.rate,question.views,users.name from question inner join users on users.id = question.users_id where question.id =$1 `,
       [id]
     );
     const selectedquestion_answer = await pool.query (
-      `select answer.answer,answer.users_id,to_char(answer.answer_date, 'DD-MM-YYYY') as answer_date from answer inner join users on users.id = answer.users_id where answer.question_id = $1`,
+      `select answer.answer,answer.users_id,users.name,to_char(answer.answer_date, 'DD-MM-YYYY') as answer_date from answer inner join users on users.id = answer.users_id where answer.question_id = $1`,
       [id]
     );
     data.question = selectedquestion.rows;
@@ -177,6 +180,22 @@ app.put ('/rates', async (req, res) => {
       id,
     ]);
     res.json (rates.rows);
+  } catch (err) {
+    console.error (err.message);
+  }
+});
+
+// endpoint to update the views
+
+app.put ('/views', async (req, res) => {
+  const id = req.body.id;
+  const views = req.body.views;
+  try {
+    const viewsRes = await pool.query (
+      'UPDATE question SET views=$1 WHERE id=$2',
+      [views, id]
+    );
+    res.json (viewsRes.rows);
   } catch (err) {
     console.error (err.message);
   }
@@ -334,18 +353,19 @@ app.post ('/register', (req, res) => {
 app.post ('/login', (req, res) => {
   const {username, password} = req.body;
 
-  
    const queryResult = pool.query (
     `select * from users where name=$1 and password=$2`,
     [username, password],
     (error, result) => {
       if (error) {
-        res.status (400).send ({error: 'Database connection not established!'});
+        res.status (400).send ({error: 'Database   not established!'});
       }
 
 
       if (result.rows.length > 0) {
+
         res.send ({success: true, message: `Welcome ${username}` , user_id: `${queryResult.rows[0].id}`});
+
       } else {
         // res.status(401).send({message: "Wrong username/password combination"});
         res.status (401).json ({

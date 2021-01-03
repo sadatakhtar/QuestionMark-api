@@ -230,14 +230,3 @@ INSERT INTO answer(question_id,answer,users_id,answer_date) VALUES(2,'HTML stand
 INSERT INTO answer(question_id,answer,users_id,answer_date) VALUES(2,'HTML is the standard markup language for Web pages',1,'01/01/2020');
 INSERT INTO answer(question_id,answer,users_id,answer_date) VALUES(3,'JavaScript, often abbreviated as JS, is a programming language that conforms to the ECMAScript specification. JavaScript is high-level, often just-in-time compiled, and multi-paradigm. ',4,'03/01/2020');
 
-
-
-
-
-
-
-
-
-
-
-
