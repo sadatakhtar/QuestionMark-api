@@ -352,7 +352,8 @@ app.post ('/register', (req, res) => {
 //LOGIN
 app.post ('/login', (req, res) => {
   const {username, password} = req.body;
-  pool.query (
+
+   const queryResult = pool.query (
     `select * from users where name=$1 and password=$2`,
     [username, password],
     (error, result) => {
@@ -360,18 +361,18 @@ app.post ('/login', (req, res) => {
         res.status (400).send ({error: 'Database   not established!'});
       }
 
+
       if (result.rows.length > 0) {
-        res.send ({
-          success: true,
-          message: `Welcome ${username}`,
-          user_id: `${result.rows[0].id}`,
-        });
+
+        res.send ({success: true, message: `Welcome ${username}` , user_id: `${queryResult.rows[0].id}`});
+
       } else {
         // res.status(401).send({message: "Wrong username/password combination"});
         res.status (401).json ({
           success: false,
           message: 'Invalid username/password. Please register or try again',
         });
+
       }
     }
   );
