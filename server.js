@@ -100,7 +100,7 @@ app.get ('/allquestions', async (req, res) => {
 app.get ('/unanswered', async (req, res) => {
   try {
     const unanswered = await pool.query (
-      'select question.id,question.question,question.module_id,question.question_date,users.name from question inner join users on users.id = question.users_id where question.answers= 0'
+      `select question.id,question.question,question.module_id,to_char(question.question_date, 'DD-MM-YYYY') as question_date ,users.name from question inner join users on users.id = question.users_id where question.answers= 0`
     );
     const filter = await pool.query ('select id,module from module');
     const data = {};
