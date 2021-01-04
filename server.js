@@ -352,8 +352,7 @@ app.post ('/register', (req, res) => {
 //LOGIN
 app.post ('/login', (req, res) => {
   const {username, password} = req.body;
-
-  const queryResult = pool.query (
+  pool.query (
     `select * from users where name=$1 and password=$2`,
     [username, password],
     (error, result) => {
@@ -365,7 +364,7 @@ app.post ('/login', (req, res) => {
         res.send ({
           success: true,
           message: `Welcome ${username}`,
-          user_id: `${queryResult.rows[0].id}`,
+          user_id: `${result.rows[0].id}`,
         });
       } else {
         // res.status(401).send({message: "Wrong username/password combination"});
