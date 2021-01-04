@@ -117,7 +117,7 @@ app.get ('/selectedquestionpage/:id', async (req, res) => {
   const data = {};
   try {
     const selectedquestion = await pool.query (
-      `select  question.id, question.question_title, question.question,to_char (question.question_date, 'DD-MM-YYYY') as question_date,question.answers,question.rate,question.views,question.module_id,users.name from question inner join users on users.id = question.users_id where question.id =$1 `,
+      `select  question.id, question.question_title, question.question,to_char (question.question_date, 'DD-MM-YYYY') as question_date,question.answers,question.rate,question.views,users.name from question inner join users on users.id = question.users_id where question.id =$1 `,
       [id]
     );
     const selectedquestion_answer = await pool.query (
@@ -352,8 +352,7 @@ app.post ('/register', (req, res) => {
 //LOGIN
 app.post ('/login', (req, res) => {
   const {username, password} = req.body;
-
-  const queryResult = pool.query (
+  pool.query (
     `select * from users where name=$1 and password=$2`,
     [username, password],
     (error, result) => {
@@ -365,7 +364,7 @@ app.post ('/login', (req, res) => {
         res.send ({
           success: true,
           message: `Welcome ${username}`,
-          user_id: `${queryResult.rows[0].id}`,
+          user_id: `${result.rows[0].id}`,
         });
       } else {
         // res.status(401).send({message: "Wrong username/password combination"});
@@ -428,5 +427,5 @@ app.post ('/ask-question', async (req, res) => {
 
 //SERVER LISTEN
 app.listen (PORT, () => {
-  console.log (`Server Listening On port ${PORT}`);
+  console.log (`Server Listening on port ${PORT}`);
 });
