@@ -428,5 +428,5 @@ app.post ('/ask-question', async (req, res) => {
 
 //SERVER LISTEN
 app.listen (PORT, () => {
-  console.log (`Server Listening on port ${PORT}`);
+  console.log (`Server Listening On port ${PORT}`);
 });
