@@ -363,7 +363,7 @@ app.post ('/login', (req, res) => {
       if (result.rows.length > 0) {
         res.send ({
           success: true,
-          message: `Welcome ${username}`,
+          message: `${username}`,
           user_id: `${result.rows[0].id}`,
         });
       } else {
