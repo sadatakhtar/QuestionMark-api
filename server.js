@@ -82,7 +82,11 @@ app.get("/modules", async (req,res) =>{
 
 app.post("/ask-question",async (req,res)=>{
   const quesObj=req.body;
-  let askQuestionQuery = await pool.query("insert into question(question_title,question,module_id,users_id,question_date,answered) values($1,$2,$3,$4,$5,$6)",[quesObj.question_title,quesObj.question,quesObj.module_id,quesObj.users_id,quesObj.question_date,quesObj.answered])
+  // console.log("++++++++++++++++++++")
+  // console.log(quesObj)
+  // console.log("++++++++++++++++++++")
+  // res.json("ok");
+  let askQuestionQuery = await pool.query("insert into question(question_title,question,module_id,users_id,question_date,answered) values($1,$2,$3,$4,$5,$6)",[quesObj.title,quesObj.question,quesObj.module_id,quesObj.users_id,quesObj.question_date,quesObj.answers])
   res.json("Values have been inserted")
 });
 
