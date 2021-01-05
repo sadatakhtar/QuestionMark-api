@@ -117,7 +117,7 @@ app.get ('/selectedquestionpage/:id', async (req, res) => {
   const data = {};
   try {
     const selectedquestion = await pool.query (
-      `select  question.id, question.question_title, question.question,to_char (question.question_date, 'DD-MM-YYYY') as question_date,question.answers,question.rate,question.views,question.module_id,users.name from question inner join users on users.id = question.users_id where question.id =$1 `,
+      `select  question.id, question.question_title,question.module_id, question.question,to_char (question.question_date, 'DD-MM-YYYY') as question_date,question.answers,question.rate,question.views,users.name from question inner join users on users.id = question.users_id where question.id =$1 `,
       [id]
     );
     const selectedquestion_answer = await pool.query (
@@ -352,8 +352,7 @@ app.post ('/register', (req, res) => {
 //LOGIN
 app.post ('/login', (req, res) => {
   const {username, password} = req.body;
-
-  const queryResult = pool.query (
+  pool.query (
     `select * from users where name=$1 and password=$2`,
     [username, password],
     (error, result) => {
@@ -365,7 +364,7 @@ app.post ('/login', (req, res) => {
         res.send ({
           success: true,
           message: `Welcome ${username}`,
-          user_id: `${queryResult.rows[0].id}`,
+          user_id: `${result.rows[0].id}`,
         });
       } else {
         // res.status(401).send({message: "Wrong username/password combination"});
@@ -410,20 +409,19 @@ app.get ('/modules', async (req, res) => {
   else res.send ('Not working');
 });
 
-app.post ('/ask-question', async (req, res) => {
-  const quesObj = req.body;
-  let askQuestionQuery = await pool.query (
-    'insert into question(question_title,question,module_id,users_id,question_date,answers) values($1,$2,$3,$4,$5,$6)',
-    [
-      quesObj.question_title,
-      quesObj.question,
-      quesObj.module_id,
-      quesObj.users_id,
-      quesObj.question_date,
-      quesObj.answers,
-    ]
-  );
-  res.json ('Values have been inserted');
+
+
+app.post("/ask-question",async (req,res)=>{
+  const quesObj=req.body;
+  // console.log("++++++++++++++++++++")
+  // console.log(quesObj)
+  // console.log("++++++++++++++++++++")
+  // res.json("ok");
+  let askQuestionQuery = await pool.query("insert into question(question_title,question,module_id,users_id,question_date,answered) values($1,$2,$3,$4,$5,$6)",[quesObj.title,quesObj.question,quesObj.module_id,quesObj.users_id,quesObj.question_date,quesObj.answers])
+  res.json("Values have been inserted")
+
+
+
 });
 
 //SERVER LISTEN
