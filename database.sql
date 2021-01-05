@@ -76,15 +76,3 @@ INSERT INTO answer(question_id,answer,users_id,answer_date) VALUES(3,'JavaScript
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
