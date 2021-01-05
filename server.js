@@ -71,7 +71,7 @@ app.get ('/allquestions', async (req, res) => {
     data.allquestions = allquestions.rows;
     data.filter = filter.rows;
     data.q_answers = q_answers.rows;
-
+    
     res.json (data);
   } catch (err) {
     console.error (err.message);
