@@ -413,14 +413,13 @@ app.post ('/ask-question', async (req, res) => {
   const quesObj = req.body;
 
   let askQuestionQuery = await pool.query (
-    'insert into question(question_title,question,module_id,users_id,question_date,answered) values($1,$2,$3,$4,$5,$6)',
+    'insert into question(question_title,question,module_id,users_id,question_date) values($1,$2,$3,$4,$5)',
     [
       quesObj.title,
       quesObj.question,
       quesObj.module_id,
       quesObj.users_id,
       quesObj.question_date,
-      quesObj.answers,
     ]
   );
   res.json ('Values have been inserted');
