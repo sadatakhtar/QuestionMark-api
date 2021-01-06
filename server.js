@@ -61,7 +61,7 @@ app.get ('/', (req, res) => {
 app.get ('/allquestions', async (req, res) => {
   try {
     const allquestions = await pool.query (
-      'select id, module_id,question_title, question,answers,views,rate from question'
+      'select id, module_id,question_title, question,answers,question_date,views,rate from question'
     );
     const filter = await pool.query ('select id,module from module');
     const q_answers = await pool.query (
