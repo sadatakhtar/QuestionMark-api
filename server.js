@@ -6,6 +6,8 @@ const Pool = require ('pg').Pool;
 const {query} = require ('express');
 require ('dotenv').config ();
 
+const nodemailer = require('nodemailer');
+
 // we use process.env to contain our environment variables
 //(variable to describe the enviroment our app is going to run in)
 //because Herohu is responsible for the environment
@@ -409,16 +411,88 @@ app.get ('/modules', async (req, res) => {
   else res.send ('Not working');
 });
 
+// //verify while registration if an email is valid.
+// app.post("/ask-question-notification",async(req,res)=>{
+//   const quesObj=req.body;
+//   // let transport = nodemailer.createTransport(options[, defaults])
+//   let transport = nodemailer.createTransport({
+//     service: 'gmail',
+//     auth: {
+//       user: 'questionmarkcyf@gmail.com', // here use your real email
+//       pass: 'DSHCYF123' // put your password correctly (not in this question please)
+//     }
+//   });
+//   const message = {
+//     from: 'questionmarkcyf@gmail.com', // Sender address
+//     to: 'to@gmail.com',         // List of recipients
+//     subject: 'Question Posted', // Subject line
+//     text: `
+    
+//     Thank you for asking a question at CYF platform, someone will soon respond to your question and you will receive a notification on your email.
+//     Question title:   ${quesObj.title}
+    
 
+//     Kind Regards
+//     Team QuestionMark
+//     CodeYourFuture
+    
+//     ` // Plain text body
+//   };
+
+//   transport.sendMail(message, function(err, info) {
+//     if (err) {
+//       console.log(err)
+//       res.json("failed") 
+//     } else {
+//       console.log(info);
+//       res.json(info);
+//     }
+//   });
+
+// })
 
 app.post("/ask-question",async (req,res)=>{
   const quesObj=req.body;
-  // console.log("++++++++++++++++++++")
-  // console.log(quesObj)
-  // console.log("++++++++++++++++++++")
-  // res.json("ok");
+
   let askQuestionQuery = await pool.query("insert into question(question_title,question,module_id,users_id,question_date,answered) values($1,$2,$3,$4,$5,$6)",[quesObj.title,quesObj.question,quesObj.module_id,quesObj.users_id,quesObj.question_date,quesObj.answers])
-  res.json("Values have been inserted")
+  let userEmailQuery= await pool.query("select email from users where id =$1",[quesObj.users_id])
+
+  let user_email=userEmailQuery.rows[0].email
+
+  let transport = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'questionmarkcyf@gmail.com', // here use your real email
+      pass: 'DSHCYF123' // put your password correctly (not in this question please)
+    }
+  });
+  const message = {
+    from: 'questionmarkcyf@gmail.com', // Sender address
+    to: `${user_email}`,         // List of recipients
+    subject: 'Question Posted  Testing', // Subject line
+    text: `
+    
+    Thank you for asking a question at CYF platform, someone will soon respond to your question and you will receive a notification on your email.
+    Question title:   ${quesObj.title}
+    
+
+    Kind Regards
+    Team QuestionMark
+    CodeYourFuture
+    
+    ` // Plain text body
+  };
+
+  transport.sendMail(message, function(err, info) {
+    if (err) {
+      console.log(err)
+    } else {
+      console.log(info);
+    }
+  });
+
+
+  res.json(true);
 
 
 
