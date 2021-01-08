@@ -3,6 +3,7 @@ const app = express ();
 path = require ('path');
 const cors = require ('cors');
 const Pool = require ('pg').Pool;
+const nodemailer = require('nodemailer');
 const {query} = require ('express');
 require ('dotenv').config ();
 
@@ -131,6 +132,40 @@ app.get ('/selectedquestionpage/:id', async (req, res) => {
     console.error (err.message);
   }
 });
+
+app.post('/sendmail', (req, res)=> {
+
+  let incomingEmail = req.body.email;
+  if(req.body.send === true){
+      
+      const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+              user: 'questionmarkcyf@gmail.com',
+              pass: process.env.EMAIL_PASS
+          }
+      });
+      
+      const mailOptions = {
+          from: 'questionmarkcyf@gmail.com',
+          to: incomingEmail,
+          subject: 'Testing nodemailer',
+          text: `Hi, this is just a test to verify the app is sending an email as intended`
+      };
+      
+          transporter.sendMail(mailOptions, (error, info) => {
+              if(error){
+                  console.log(error);
+              }else{
+                  console.log(`Email Sent: ${info.response}`);
+              }
+          });
+      res.send('Email sent');
+ }else{
+  res.send('Email sending failed!');
+ }
+  
+})
 
 //Post Reply to question by id
 
