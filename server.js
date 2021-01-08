@@ -486,6 +486,7 @@ app.get ('/modules', async (req, res) => {
 
 app.post ('/ask-question', async (req, res) => {
   const quesObj = req.body;
+  console.log (quesObj);
   let askQuestionQuery = await pool.query (
     'insert into question(question_title,question,module_id,users_id,question_date,answered) values($1,$2,$3,$4,$5,$6)',
     [
