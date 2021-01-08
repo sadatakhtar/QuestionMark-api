@@ -61,17 +61,21 @@ app.get ('/', (req, res) => {
   res.send ('Homepage here');
 });
 
+// all questions
+
 app.get ('/allquestions', async (req, res) => {
   try {
     const allquestions = await pool.query (
-      'select id, module_id,question_title, question,answers,views,rate from question'
+      `select id, module_id,question_title, question,answers,to_char(question_date,'DD-MM-YYYY') as question_date,views,rate from question`
     );
+    const count = await pool.query ('select count(question) from question');
     const filter = await pool.query ('select id,module from module');
     const q_answers = await pool.query (
       'select question.question,answer.answer from question inner join answer on question.id = answer.question_id'
     );
     const data = {};
     data.allquestions = allquestions.rows;
+    data.count = count.rows[0];
     data.filter = filter.rows;
     data.q_answers = q_answers.rows;
     
@@ -120,7 +124,7 @@ app.get ('/selectedquestionpage/:id', async (req, res) => {
   const data = {};
   try {
     const selectedquestion = await pool.query (
-      `select  question.id, question.question_title,question.module_id, question.question,to_char (question.question_date, 'DD-MM-YYYY') as question_date,question.answers,question.rate,question.views,users.name from question inner join users on users.id = question.users_id where question.id =$1 `,
+      `select  question.id, question.question_title,question.module_id, question.question,to_char (question.question_date, 'DD-MM-YYYY') as question_date,question.answers,question.rate,question.views,users.name,users.email from question inner join users on users.id = question.users_id where question.id =$1 `,
       [id]
     );
     const selectedquestion_answer = await pool.query (
@@ -400,7 +404,7 @@ app.post ('/login', (req, res) => {
       if (result.rows.length > 0) {
         res.send ({
           success: true,
-          message: `Welcome ${username}`,
+          message: `${username}`,
           user_id: `${result.rows[0].id}`,
         });
       } else {
@@ -529,9 +533,10 @@ app.post("/ask-question",async (req,res)=>{
 
   res.json(true);
 
+
 });
 
 //SERVER LISTEN
 app.listen (PORT, () => {
-  console.log (`Server Listening on port ${PORT}`);
+  console.log (`Server Listening On port ${PORT}`);
 });
