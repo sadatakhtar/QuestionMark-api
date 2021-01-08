@@ -7,8 +7,6 @@ const nodemailer = require('nodemailer');
 const {query} = require ('express');
 require ('dotenv').config ();
 
-const nodemailer = require('nodemailer');
-
 // we use process.env to contain our environment variables
 //(variable to describe the enviroment our app is going to run in)
 //because Herohu is responsible for the environment
