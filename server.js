@@ -390,13 +390,13 @@ app.get ('/ask-question/:user_id', async (req, res) => {
   userObj.name = name.rows;
 
   const answeredQuestions = await pool.query (
-    'select question from question where answers >0 and users_id=$1',
+    'select question_title from question where answers >0 and users_id=$1',
     [user_id]
   );
   userObj.answeredQuestions = answeredQuestions.rows;
 
   const unAnsweredQuestions = await pool.query (
-    'select question from question where answers =0 and users_id=$1',
+    'select question_title from question where answers =0 and users_id=$1',
     [user_id]
   );
   userObj.unAnsweredQuestions = unAnsweredQuestions.rows;
@@ -493,8 +493,6 @@ app.post("/ask-question",async (req,res)=>{
 
 
   res.json(true);
-
-
 
 });
 
