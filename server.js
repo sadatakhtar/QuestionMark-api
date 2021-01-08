@@ -488,7 +488,7 @@ app.post ('/ask-question', async (req, res) => {
   const quesObj = req.body;
   console.log (quesObj);
   let askQuestionQuery = await pool.query (
-    'insert into question(question_title,question,module_id,users_id,question_date,answered) values($1,$2,$3,$4,$5,$6)',
+    'insert into question(question_title,question,module_id,users_id,question_date,answers) values($1,$2,$3,$4,$5,$6)',
     [
       quesObj.title,
       quesObj.question,
@@ -498,37 +498,37 @@ app.post ('/ask-question', async (req, res) => {
       quesObj.answers,
     ]
   );
-  // let userEmailQuery = await pool.query (
-  //   'select email from users where id =$1',
-  //   [quesObj.users_id]
-  // );
-  // let user_email = userEmailQuery.rows[0].email;
-  // let transport = nodemailer.createTransport ({
-  //   service: 'gmail',
-  //   auth: {
-  //     user: 'questionmarkcyf@gmail.com', // here use your real email
-  //     pass: 'DSHCYF123', // put your password correctly (not in this question please)
-  //   },
-  // });
-  // const message = {
-  //   from: 'questionmarkcyf@gmail.com', // Sender address
-  //   to: `${user_email}`, // List of recipients
-  //   subject: 'Question Posted  Testing', // Subject line
-  //   text: `
-  //   Thank you for asking a question at CYF platform, someone will soon respond to your question and you will receive a notification on your email.
-  //   Question title:   ${quesObj.title}
-  //   Kind Regards
-  //   Team QuestionMark
-  //   CodeYourFuture
-  //   `, // Plain text body
-  // };
-  // transport.sendMail (message, function (err, info) {
-  //   if (err) {
-  //     console.log (err);
-  //   } else {
-  //     console.log (info);
-  //   }
-  // });
+  let userEmailQuery = await pool.query (
+    'select email from users where id =$1',
+    [quesObj.users_id]
+  );
+  let user_email = userEmailQuery.rows[0].email;
+  let transport = nodemailer.createTransport ({
+    service: 'gmail',
+    auth: {
+      user: 'questionmarkcyf@gmail.com', // here use your real email
+      pass: 'DSHCYF123', // put your password correctly (not in this question please)
+    },
+  });
+  const message = {
+    from: 'questionmarkcyf@gmail.com', // Sender address
+    to: `${user_email}`, // List of recipients
+    subject: 'Question Posted  Testing', // Subject line
+    text: `
+    Thank you for asking a question at CYF platform, someone will soon respond to your question and you will receive a notification on your email.
+    Question title:   ${quesObj.title}
+    Kind Regards
+    Team QuestionMark
+    CodeYourFuture
+    `, // Plain text body
+  };
+  transport.sendMail (message, function (err, info) {
+    if (err) {
+      console.log (err);
+    } else {
+      console.log (info);
+    }
+  });
   res.json (true);
 });
 
