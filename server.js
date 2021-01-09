@@ -140,6 +140,7 @@ app.get ('/selectedquestionpage/:id', async (req, res) => {
 app.post('/sendmail', (req, res)=> {
 
   let incomingEmail = req.body.email;
+  let incomingText = req.body.text;
   if(req.body.send === true){
       
       const transporter = nodemailer.createTransport({
@@ -153,8 +154,8 @@ app.post('/sendmail', (req, res)=> {
       const mailOptions = {
           from: 'questionmarkcyf@gmail.com',
           to: incomingEmail,
-          subject: 'Testing nodemailer',
-          text: `Hi, this is just a test to verify the app is sending an email as intended`
+          subject: 'Reply recieved (Q&A forum)',
+          text: incomingText
       };
       
           transporter.sendMail(mailOptions, (error, info) => {
