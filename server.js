@@ -274,10 +274,10 @@ app.delete ('/userAnswers/:id', async (req, res) => {
     const deleteAnswer = await pool.query ('delete from answer where id = $1', [
       id,
     ]);
-    const decreaseAnswers = await pool.query (
-      'UPDATE question SET answers = answers-1 WHERE id = $1',
-      [question_id]
-    );
+    // const decreaseAnswers = await pool.query (
+    //   'UPDATE question SET answers = answers-1 WHERE id = $1',
+    //   [id]
+    // );
 
     res.json ('Answer was deleted');
   } catch (err) {
