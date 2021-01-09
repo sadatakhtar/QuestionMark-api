@@ -137,9 +137,23 @@ app.get ('/selectedquestionpage/:id', async (req, res) => {
   }
 });
 
-app.post('/sendmail', (req, res)=> {
+app.post('/sendmail', async (req, res)=> {
 
   let incomingEmail = req.body.email;
+  let ask_question_email;
+  let incomingText=req.body.text;
+
+  if(req.body.users_id)
+  {
+    let userEmailQuery= await pool.query("select email from users where id =$1",[req.body.users_id])
+    ask_question_email=userEmailQuery.rows[0].email;
+  }
+
+  if(incomingEmail==="false")
+  {
+    incomingEmail=ask_question_email;
+  }
+
   if(req.body.send === true){
       
       const transporter = nodemailer.createTransport({
@@ -154,7 +168,7 @@ app.post('/sendmail', (req, res)=> {
           from: 'questionmarkcyf@gmail.com',
           to: incomingEmail,
           subject: 'Testing nodemailer',
-          text: `Hi, this is just a test to verify the app is sending an email as intended`
+          text: `${incomingText}`
       };
       
           transporter.sendMail(mailOptions, (error, info) => {
