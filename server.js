@@ -3,7 +3,7 @@ const app = express ();
 path = require ('path');
 const cors = require ('cors');
 const Pool = require ('pg').Pool;
-const nodemailer = require ('nodemailer');
+const nodemailer = require('nodemailer');
 const {query} = require ('express');
 require ('dotenv').config ();
 
@@ -76,7 +76,7 @@ app.get ('/allquestions', async (req, res) => {
     data.count = count.rows[0];
     data.filter = filter.rows;
     data.q_answers = q_answers.rows;
-
+    
     res.json (data);
   } catch (err) {
     console.error (err.message);
@@ -137,36 +137,39 @@ app.get ('/selectedquestionpage/:id', async (req, res) => {
   }
 });
 
-app.post ('/sendmail', (req, res) => {
+app.post('/sendmail', (req, res)=> {
+
   let incomingEmail = req.body.email;
-  if (req.body.send === true) {
-    const transporter = nodemailer.createTransport ({
-      service: 'gmail',
-      auth: {
-        user: 'questionmarkcyf@gmail.com',
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-
-    const mailOptions = {
-      from: 'questionmarkcyf@gmail.com',
-      to: incomingEmail,
-      subject: 'Testing nodemailer',
-      text: `Hi, this is just a test to verify the app is sending an email as intended`,
-    };
-
-    transporter.sendMail (mailOptions, (error, info) => {
-      if (error) {
-        console.log (error);
-      } else {
-        console.log (`Email Sent: ${info.response}`);
-      }
-    });
-    res.send ('Email sent');
-  } else {
-    res.send ('Email sending failed!');
-  }
-});
+  if(req.body.send === true){
+      
+      const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+              user: 'questionmarkcyf@gmail.com',
+              pass: process.env.EMAIL_PASS
+          }
+      });
+      
+      const mailOptions = {
+          from: 'questionmarkcyf@gmail.com',
+          to: incomingEmail,
+          subject: 'Testing nodemailer',
+          text: `Hi, this is just a test to verify the app is sending an email as intended`
+      };
+      
+          transporter.sendMail(mailOptions, (error, info) => {
+              if(error){
+                  console.log(error);
+              }else{
+                  console.log(`Email Sent: ${info.response}`);
+              }
+          });
+      res.send('Email sent');
+ }else{
+  res.send('Email sending failed!');
+ }
+  
+})
 
 //Post Reply to question by id
 
@@ -274,10 +277,10 @@ app.delete ('/userAnswers/:id', async (req, res) => {
     const deleteAnswer = await pool.query ('delete from answer where id = $1', [
       id,
     ]);
-    // const decreaseAnswers = await pool.query (
-    //   'UPDATE question SET answers = answers-1 WHERE id = $1',
-    //   [id]
-    // );
+    const decreaseAnswers = await pool.query (
+      'UPDATE question SET answers = answers-1 WHERE id = $1',
+      [question_id]
+    );
 
     res.json ('Answer was deleted');
   } catch (err) {
@@ -461,21 +464,22 @@ app.get ('/modules', async (req, res) => {
 //     to: 'to@gmail.com',         // List of recipients
 //     subject: 'Question Posted', // Subject line
 //     text: `
-
+    
 //     Thank you for asking a question at CYF platform, someone will soon respond to your question and you will receive a notification on your email.
 //     Question title:   ${quesObj.title}
+    
 
 //     Kind Regards
 //     Team QuestionMark
 //     CodeYourFuture
-
+    
 //     ` // Plain text body
 //   };
 
 //   transport.sendMail(message, function(err, info) {
 //     if (err) {
 //       console.log(err)
-//       res.json("failed")
+//       res.json("failed") 
 //     } else {
 //       console.log(info);
 //       res.json(info);
@@ -484,52 +488,50 @@ app.get ('/modules', async (req, res) => {
 
 // })
 
-app.post ('/ask-question', async (req, res) => {
-  const quesObj = req.body;
-  console.log (quesObj);
-  let askQuestionQuery = await pool.query (
-    'insert into question(question_title,question,module_id,users_id,question_date,answers) values($1,$2,$3,$4,$5,$6)',
-    [
-      quesObj.title,
-      quesObj.question,
-      quesObj.module_id,
-      quesObj.users_id,
-      quesObj.question_date,
-      quesObj.answers,
-    ]
-  );
-  let userEmailQuery = await pool.query (
-    'select email from users where id =$1',
-    [quesObj.users_id]
-  );
-  let user_email = userEmailQuery.rows[0].email;
-  let transport = nodemailer.createTransport ({
-    service: 'gmail',
-    auth: {
-      user: 'questionmarkcyf@gmail.com', // here use your real email
-      pass: 'DSHCYF123', // put your password correctly (not in this question please)
-    },
-  });
-  const message = {
-    from: 'questionmarkcyf@gmail.com', // Sender address
-    to: `${user_email}`, // List of recipients
-    subject: 'Question Posted  Testing', // Subject line
-    text: `
-    Thank you for asking a question at CYF platform, someone will soon respond to your question and you will receive a notification on your email.
-    Question title:   ${quesObj.title}
-    Kind Regards
-    Team QuestionMark
-    CodeYourFuture
-    `, // Plain text body
-  };
-  transport.sendMail (message, function (err, info) {
-    if (err) {
-      console.log (err);
-    } else {
-      console.log (info);
-    }
-  });
-  res.json (true);
+app.post("/ask-question",async (req,res)=>{
+  const quesObj=req.body;
+  // console.log(quesObj);
+  let askQuestionQuery = await pool.query("insert into question(question_title,question,module_id,users_id,question_date,answers) values($1,$2,$3,$4,$5,$6)",[quesObj.title,quesObj.question,quesObj.module_id,quesObj.users_id,quesObj.question_date,quesObj.answers])
+  // let userEmailQuery= await pool.query("select email from users where id =$1",[quesObj.users_id])
+
+  // let user_email=userEmailQuery.rows[0].email
+
+  // let transport = nodemailer.createTransport({
+  //   service: 'gmail',
+  //   auth: {
+  //     user: 'questionmarkcyf@gmail.com', // here use your real email
+  //     pass: 'DSHCYF123' // put your password correctly (not in this question please)
+  //   }
+  // });
+  // const message = {
+  //   from: 'questionmarkcyf@gmail.com', // Sender address
+  //   to: `${user_email}`,         // List of recipients
+  //   subject: 'Question Posted  Testing', // Subject line
+  //   text: `
+    
+  //   Thank you for asking a question at CYF platform, someone will soon respond to your question and you will receive a notification on your email.
+  //   Question title:   ${quesObj.title}
+    
+
+  //   Kind Regards
+  //   Team QuestionMark
+  //   CodeYourFuture
+    
+  //   ` // Plain text body
+  // };
+
+  // transport.sendMail(message, function(err, info) {
+  //   if (err) {
+  //     console.log(err)
+  //   } else {
+  //     console.log(info);
+  //   }
+  // });
+
+
+  res.json(true);
+
+
 });
 
 //SERVER LISTEN
