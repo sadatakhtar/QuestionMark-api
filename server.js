@@ -243,7 +243,7 @@ app.get ('/userAnswers/:id', async (req, res) => {
   const id = parseInt (req.params.id);
   try {
     const answers = await pool.query (
-      'select answer.id,question.question,answer.answer,question.module_id from question inner join answer on question.id = answer.question_id where answer.users_id = $1',
+      'select answer.question_id,question.question,answer.answer,question.module_id from question inner join answer on question.id = answer.question_id where answer.users_id = $1',
       [id]
     );
     res.json (answers.rows);
