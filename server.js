@@ -248,6 +248,14 @@ app.get ('/userAsked/:id', async (req, res) => {
   }
 });
 
+//test
+
+app.get ('/test', async (req, res) => {
+  const answer_question_id = await pool.query (
+    'select question_id from answer where id = 1'
+  );
+});
+
 //****************************************************************************************************************************************** */
 
 //*******************************************             Endpoint to delete a user's answer by id             ***********************************
@@ -263,7 +271,7 @@ app.delete ('/userAnswers/:id', async (req, res) => {
     );
     const decreaseAnswers = await pool.query (
       'UPDATE question SET answers = answers-1 WHERE id = $1',
-      [answer_question_id]
+      [answer_question_id.rows[0]]
     );
 
     res.json ('Answer was deleted');
