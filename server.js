@@ -60,6 +60,32 @@ app.get ('/', (req, res) => {
 });
 
 // all questions
+app.post("/validEmail",async(req,res)=>{
+
+  const {email, password} = req.body;
+  const router = express.Router();
+  const emailValidator = require('deep-email-validator');
+
+ 
+  if (!email || !password){
+    return res.status(400).send({
+      message: "Email or password missing."
+    })
+  }
+  async function isEmailValid(email) {
+  return emailValidator.validate(email)
+  }
+  const {valid, reason, validators} = await isEmailValid(email);
+  
+  if (valid) return res.send({message: "OK"});
+
+  return res.status(400).send({
+    message: "Please provide a valid email address.",
+    reason: validators[reason].reason
+  })
+
+});
+
 
 app.get ('/allquestions', async (req, res) => {
   try {
