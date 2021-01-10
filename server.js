@@ -254,7 +254,7 @@ app.get ('/test', async (req, res) => {
   const answer_question_id = await pool.query (
     'select question_id from answer where id = 1'
   );
-  res.json (answer_question_id);
+  res.json (answer_question_id.rows[0]);
 });
 
 //****************************************************************************************************************************************** */
