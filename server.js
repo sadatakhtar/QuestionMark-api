@@ -272,7 +272,7 @@ app.delete ('/userAnswers/:id', async (req, res) => {
     );
     const decreaseAnswers = await pool.query (
       'UPDATE question SET answers = answers-1 WHERE id = $1',
-      [answer_question_id.rows[0]]
+      [answer_question_id.rows[0].question_id]
     );
 
     res.json ('Answer was deleted');
