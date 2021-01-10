@@ -262,6 +262,7 @@ app.get ('/test', async (req, res) => {
 //*******************************************             Endpoint to delete a user's answer by id             ***********************************
 app.delete ('/userAnswers/:id', async (req, res) => {
   try {
+    const id = req.params.id;
     const answer_question_id = await pool.query (
       'select question_id from answer where id = $1',
       [id]
@@ -270,7 +271,6 @@ app.delete ('/userAnswers/:id', async (req, res) => {
       'UPDATE question SET answers = answers-1 WHERE id = $1',
       [answer_question_id.rows[0].question_id]
     );
-    const id = req.params.id;
     const deleteAnswer = await pool.query ('delete from answer where id = $1', [
       id,
     ]);
