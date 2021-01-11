@@ -37,9 +37,6 @@ if (process.env.NODE_ENV === 'production') {
   app.use (express.static (path.join (__dirname, 'client/build')));
 }
 
-//console.log (__dirname);
-//console.log (path.join (__dirname, 'client/build'));
-
 // middleware
 app.use (cors ());
 app.use (express.json ()); //allow use to  access request.body
@@ -53,7 +50,7 @@ app.use (function (req, res, next) {
   next ();
 });
 
-//ROUTES
+//******************************************                ROUTES              ****************************************************************
 
 app.get ('/', (req, res) => {
   res.send ('Homepage here');
@@ -86,7 +83,6 @@ app.post("/validEmail",async(req,res)=>{
 
 });
 
-
 app.get ('/allquestions', async (req, res) => {
   try {
     const allquestions = await pool.query (
@@ -108,26 +104,28 @@ app.get ('/allquestions', async (req, res) => {
     console.error (err.message);
   }
 });
-`select  question.id, question.question_title, question.question,to_char (question.question_date, 'DD-MM-YYYY') as question_date,question.answers,users.name from question inner join users on users.id = question.users_id where question.id =$1 `, app.get (
-  // answered questions
-  '/answered',
-  async (req, res) => {
-    try {
-      const answered = await pool.query (
-        `select answer.question_id,question.question, to_char(question.question_date,'DD-MM-YYYY') as question_date, question.answers,question.module_id,answer.answer, to_char(answer.answer_date,'DD-MM-YYYY') as answer_date from question inner join answer on question.id = answer.question_id`
-      );
-      const filter = await pool.query ('select id,module from module');
-      const data = {};
-      data.answered = answered.rows;
-      data.filter = filter.rows;
-      res.json (data);
-    } catch (err) {
-      console.error (err.message);
-    }
-  }
-);
+//****************************************************************************************************************************************** */
 
-// unanswered questions
+//***********************************************             answered questions              *************************************************
+
+app.get ('/answered', async (req, res) => {
+  try {
+    const answered = await pool.query (
+      `select answer.question_id,question.question, to_char(question.question_date,'DD-MM-YYYY') as question_date, question.answers,question.module_id,answer.answer, to_char(answer.answer_date,'DD-MM-YYYY') as answer_date from question inner join answer on question.id = answer.question_id`
+    );
+    const filter = await pool.query ('select id,module from module');
+    const data = {};
+    data.answered = answered.rows;
+    data.filter = filter.rows;
+    res.json (data);
+  } catch (err) {
+    console.error (err.message);
+  }
+});
+
+//****************************************************************************************************************************************** */
+
+//*****************************************             unanswered questions              **************************************************
 app.get ('/unanswered', async (req, res) => {
   try {
     const unanswered = await pool.query (
@@ -142,7 +140,7 @@ app.get ('/unanswered', async (req, res) => {
     console.error (err.message);
   }
 });
-// selected question description
+//*****************************************               selected question description             *********************************************
 app.get ('/selectedquestionpage/:id', async (req, res) => {
   const id = req.params.id;
   const data = {};
@@ -162,6 +160,7 @@ app.get ('/selectedquestionpage/:id', async (req, res) => {
     console.error (err.message);
   }
 });
+//****************************************************************************************************************************************** */
 
 app.post('/sendmail', async (req, res)=> {
 
@@ -238,7 +237,9 @@ app.post ('/replypage', async (req, res) => {
   }
 });
 
-// endpoint for recieving the views and rate
+//****************************************************************************************************************************************** */
+
+//*******************************************             endpoint for recieving the views and rate             *******************************
 
 app.get ('/counters', async (req, res) => {
   try {
@@ -249,7 +250,9 @@ app.get ('/counters', async (req, res) => {
   }
 });
 
-// endpoint to update the rates
+//****************************************************************************************************************************************** */
+
+//***************************************               endpoint to update the rates              ********************************************
 
 app.put ('/rates', async (req, res) => {
   const id = req.body.id;
@@ -265,7 +268,9 @@ app.put ('/rates', async (req, res) => {
   }
 });
 
-// endpoint to update the views
+//****************************************************************************************************************************************** */
+
+//****************************************              endpoint to update the views              *********************************************
 
 app.put ('/views', async (req, res) => {
   const id = req.body.id;
@@ -281,13 +286,15 @@ app.put ('/views', async (req, res) => {
   }
 });
 
-// Endpoint for getting user answers
+//****************************************************************************************************************************************** */
+
+//*****************************************             Endpoint for getting user answers             *****************************************
 
 app.get ('/userAnswers/:id', async (req, res) => {
   const id = parseInt (req.params.id);
   try {
     const answers = await pool.query (
-      'select answer.id,question.question,answer.answer,question.module_id from question inner join answer on question.id = answer.question_id where answer.users_id = $1',
+      'select answer.id,question.question,answer.answer,answer.question_id,question.module_id from question inner join answer on question.id = answer.question_id where answer.users_id = $1',
       [id]
     );
     res.json (answers.rows);
@@ -296,7 +303,9 @@ app.get ('/userAnswers/:id', async (req, res) => {
   }
 });
 
-// Endpoint for getting user asked questions
+//****************************************************************************************************************************************** */
+
+//****************************************              Endpoint for getting asked questions by a user            **********************************
 
 app.get ('/userAsked/:id', async (req, res) => {
   const id = parseInt (req.params.id);
@@ -311,10 +320,29 @@ app.get ('/userAsked/:id', async (req, res) => {
   }
 });
 
-// Endpoint delete a user's answer by id
+//test
+
+app.get ('/test', async (req, res) => {
+  const answer_question_id = await pool.query (
+    'select question_id from answer where id = 1'
+  );
+  res.json (answer_question_id.rows[0].question_id);
+});
+
+//****************************************************************************************************************************************** */
+
+//*******************************************             Endpoint to delete a user's answer by id             ***********************************
 app.delete ('/userAnswers/:id', async (req, res) => {
   try {
     const id = req.params.id;
+    const answer_question_id = await pool.query (
+      'select question_id from answer where id = $1',
+      [id]
+    );
+    const decreaseAnswers = await pool.query (
+      'UPDATE question SET answers = answers-1 WHERE id = $1',
+      [answer_question_id.rows[0].question_id]
+    );
     const deleteAnswer = await pool.query ('delete from answer where id = $1', [
       id,
     ]);
@@ -328,8 +356,10 @@ app.delete ('/userAnswers/:id', async (req, res) => {
     console.error (err.message);
   }
 });
+//****************************************************************************************************************************************** */
 
-// Endpoint delete a user's question by id
+//*****************************************              Endpoint delete a user's question by id             *********************************
+
 app.delete ('/userAsked/:id', async (req, res) => {
   try {
     const id = req.params.id;
@@ -351,7 +381,9 @@ app.delete ('/userAsked/:id', async (req, res) => {
   }
 });
 
-//Endoint to edit user's answer
+//****************************************************************************************************************************************** */
+
+//*****************************************             Endoint to edit user's answer             *********************************************
 
 app.put ('/userAnswers/:id', async (req, res) => {
   console.log ('body = ' + req.body + 'params-id = ' + req.params.id);
@@ -368,7 +400,9 @@ app.put ('/userAnswers/:id', async (req, res) => {
   }
 });
 
-//Endoint to edit user's question
+//****************************************************************************************************************************************** */
+
+//***************************************             Endoint to edit user's question             *********************************************
 
 app.put ('/userAsked/:id', async (req, res) => {
   console.log ('body = ' + req.body.question + 'params-id = ' + req.params.id);
@@ -382,6 +416,54 @@ app.put ('/userAsked/:id', async (req, res) => {
     res.json ('Question updated');
   } catch (err) {
     console.error (err.message);
+  }
+});
+
+//****************************************************************************************************************************************** */
+
+app.post ('/sendmail', async (req, res) => {
+  let incomingEmail = req.body.email;
+  let ask_question_email;
+  let incomingText = req.body.text;
+
+  if (req.body.users_id) {
+    let userEmailQuery = await pool.query (
+      'select email from users where id =$1',
+      [req.body.users_id]
+    );
+    ask_question_email = userEmailQuery.rows[0].email;
+  }
+
+  if (incomingEmail === 'false') {
+    incomingEmail = ask_question_email;
+  }
+
+  if (req.body.send === true) {
+    const transporter = nodemailer.createTransport ({
+      service: 'gmail',
+      auth: {
+        user: 'questionmarkcyf@gmail.com',
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    const mailOptions = {
+      from: 'questionmarkcyf@gmail.com',
+      to: incomingEmail,
+      subject: 'Testing nodemailer',
+      text: `${incomingText}`,
+    };
+
+    transporter.sendMail (mailOptions, (error, info) => {
+      if (error) {
+        console.log (error);
+      } else {
+        console.log (`Email Sent: ${info.response}`);
+      }
+    });
+    res.send ('Email sent');
+  } else {
+    res.send ('Email sending failed!');
   }
 });
 
@@ -529,6 +611,7 @@ app.get ('/modules', async (req, res) => {
 
 // })
 
+
 app.post("/ask-question",async (req,res)=>{
   const quesObj=req.body;
   // console.log(quesObj);
@@ -549,15 +632,13 @@ app.post("/ask-question",async (req,res)=>{
   //   to: `${user_email}`,         // List of recipients
   //   subject: 'Question Posted  Testing', // Subject line
   //   text: `
+
     
   //   Thank you for asking a question at CYF platform, someone will soon respond to your question and you will receive a notification on your email.
   //   Question title:   ${quesObj.title}
-    
 
   //   Kind Regards
   //   Team QuestionMark
-  //   CodeYourFuture
-    
   //   ` // Plain text body
   // };
 
@@ -569,9 +650,7 @@ app.post("/ask-question",async (req,res)=>{
   //   }
   // });
 
-
   res.json(true);
-
 
 });
 
