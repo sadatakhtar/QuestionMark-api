@@ -194,7 +194,7 @@ app.post('/sendmail', async (req, res)=> {
       const mailOptions = {
           from: 'questionmarkcyf@gmail.com',
           to: incomingEmail,
-          subject: 'Testing nodemailer',
+          subject: 'Q&A Notification',
           text: `${incomingText}`
       };
       
