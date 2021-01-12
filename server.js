@@ -420,7 +420,7 @@ app.put ('/userAsked/:id', async (req, res) => {
 
 //****************************************************************************************************************************************** */
 //***************************************             Endoint to Add a comment to an answer             *********************************************
-app.post ('/comment', async (req, res) => {
+app.post ('/comments', async (req, res) => {
   console.log (req.body);
   const comment = req.body.comment;
   const question_id = req.question_id;
@@ -447,7 +447,7 @@ app.post ('/comment', async (req, res) => {
 
 //******************************************************************************************************************************************
 //***************************************             Endoint to display all the comments for an answer             *********************************************
-app.get ('/comment', async (req, res) => {
+app.get ('/comments', async (req, res) => {
   try {
     const displayComment = await pool.query ('select *from comment');
 
