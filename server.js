@@ -7,6 +7,10 @@ const nodemailer = require ('nodemailer');
 const {query} = require ('express');
 require ('dotenv').config ();
 
+// setting time zone
+
+process.env.TZ = 'Europe/London';
+
 // we use process.env to contain our environment variables
 //(variable to describe the enviroment our app is going to run in)
 //because Herohu is responsible for the environment
@@ -137,6 +141,9 @@ app.get ('/unanswered', async (req, res) => {
     console.error (err.message);
   }
 });
+
+//****************************************************************************************************************************************** */
+
 //*****************************************               selected question description             *********************************************
 app.get ('/selectedquestionpage/:id', async (req, res) => {
   const id = req.params.id;
@@ -205,7 +212,9 @@ app.post ('/sendmail', async (req, res) => {
   }
 });
 
-//Post Reply to question by id
+//****************************************************************************************************************************************** */
+
+//*******************************************             Post Reply to question by id           *******************************
 
 app.post ('/replypage', async (req, res) => {
   console.log (req.body);
@@ -233,7 +242,7 @@ app.post ('/replypage', async (req, res) => {
 
 //****************************************************************************************************************************************** */
 
-//*******************************************             endpoint for recieving the views and rate             *******************************
+//*******************************************             endpoint for recieving the views and rate counters           *******************************
 
 app.get ('/counters', async (req, res) => {
   try {
@@ -410,6 +419,32 @@ app.put ('/userAsked/:id', async (req, res) => {
 });
 
 //****************************************************************************************************************************************** */
+//***************************************             Endoint to Add a comment to an answer             *********************************************
+app.post ('/comment', async (req, res) => {
+  console.log (req.body);
+  const comment = req.body.comment;
+  const question_id = req.question_id;
+  const answer_id = req.body.answer_id;
+  const date = req.body.date;
+
+  try {
+    const commentDescription = await pool.query (
+      'INSERT INTO comment(comment,question_id,answer_id,users_id,comment_date) VALUES($1,$2,$3,$4,$5) RETURNING *',
+      [comment, question_id, answer_id, user_id, date]
+    );
+
+    const increaseComments = await pool.query (
+      'UPDATE comment SET comments_counter = comments_counter+1 WHERE answer_id = $1',
+      [answer_id]
+    );
+
+    res.json (commentDescription.rows[0]).status (200);
+  } catch (err) {
+    console.error (err.message);
+  }
+});
+
+//******************************************************************************************************************************************
 
 app.post ('/sendmail', async (req, res) => {
   let incomingEmail = req.body.email;
