@@ -154,7 +154,7 @@ app.get ('/selectedquestionpage/:id', async (req, res) => {
       [id]
     );
     const selectedquestion_answer = await pool.query (
-      `select answer.answer,answer.users_id,users.name,to_char(answer.answer_date, 'DD-MM-YYYY') as answer_date from answer inner join users on users.id = answer.users_id where answer.question_id = $1`,
+      `select answer.id,answer.question_id,answer.answer,answer.users_id,users.name,to_char(answer.answer_date, 'DD-MM-YYYY') as answer_date from answer inner join users on users.id = answer.users_id where answer.question_id = $1`,
       [id]
     );
     data.question = selectedquestion.rows;
