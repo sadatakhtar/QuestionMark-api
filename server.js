@@ -425,12 +425,13 @@ app.post ('/comment', async (req, res) => {
   const comment = req.body.comment;
   const question_id = req.question_id;
   const answer_id = req.body.answer_id;
+  const users_id = req.body.users_id;
   const date = req.body.date;
 
   try {
     const commentDescription = await pool.query (
       'INSERT INTO comment(comment,question_id,answer_id,users_id,comment_date) VALUES($1,$2,$3,$4,$5) RETURNING *',
-      [comment, question_id, answer_id, user_id, date]
+      [comment, question_id, answer_id, users_id, date]
     );
 
     const increaseComments = await pool.query (
