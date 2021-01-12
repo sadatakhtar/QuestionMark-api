@@ -446,6 +446,18 @@ app.post ('/comment', async (req, res) => {
 });
 
 //******************************************************************************************************************************************
+//***************************************             Endoint to display all the comments for an answer             *********************************************
+app.get ('/comment', async (req, res) => {
+  try {
+    const displayComment = await pool.query ('select *from comment');
+
+    res.json (displayComment.rows).status (200);
+  } catch (err) {
+    console.error (err.message);
+  }
+});
+
+//******************************************************************************************************************************************
 
 app.post ('/sendmail', async (req, res) => {
   let incomingEmail = req.body.email;
