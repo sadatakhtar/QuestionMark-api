@@ -423,7 +423,7 @@ app.put ('/userAsked/:id', async (req, res) => {
 app.post ('/comments', async (req, res) => {
   console.log (req.body);
   const comment = req.body.comment;
-  const question_id = req.question_id;
+  const question_id = req.body.question_id;
   const answer_id = req.body.answer_id;
   const users_id = req.body.users_id;
   const date = req.body.date;
