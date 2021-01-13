@@ -449,7 +449,9 @@ app.post ('/comments', async (req, res) => {
 //***************************************             Endoint to display all the comments for an answer             *********************************************
 app.get ('/comments', async (req, res) => {
   try {
-    const displayComment = await pool.query ('select *from comment');
+    const displayComment = await pool.query (
+      'select *from comment ORDER BY comment_date DESC'
+    );
 
     res.json (displayComment.rows).status (200);
   } catch (err) {
