@@ -60,7 +60,6 @@ app.get ('/', (req, res) => {
   res.send ('Homepage here');
 });
 
-// all questions
 app.post ('/validEmail', async (req, res) => {
   const {email, password} = req.body;
   const router = express.Router ();
@@ -83,6 +82,10 @@ app.post ('/validEmail', async (req, res) => {
     reason: validators[reason].reason,
   });
 });
+
+//****************************************************************************************************************************************** */
+
+//***********************************************          Get all questions              *************************************************
 
 app.get ('/allquestions', async (req, res) => {
   try {
@@ -107,7 +110,7 @@ app.get ('/allquestions', async (req, res) => {
 });
 //****************************************************************************************************************************************** */
 
-//***********************************************             answered questions              *************************************************
+//***********************************************           Get all  answered questions              *************************************************
 
 app.get ('/answered', async (req, res) => {
   try {
@@ -126,7 +129,8 @@ app.get ('/answered', async (req, res) => {
 
 //****************************************************************************************************************************************** */
 
-//*****************************************             unanswered questions              **************************************************
+//*****************************************            Get all unanswered questions              **************************************************
+
 app.get ('/unanswered', async (req, res) => {
   try {
     const unanswered = await pool.query (
@@ -144,7 +148,8 @@ app.get ('/unanswered', async (req, res) => {
 
 //****************************************************************************************************************************************** */
 
-//*****************************************               selected question description             *********************************************
+//*****************************************              Get selected question description             *********************************************
+
 app.get ('/selectedquestionpage/:id', async (req, res) => {
   const id = req.params.id;
   const data = {};
@@ -214,7 +219,7 @@ app.post ('/sendmail', async (req, res) => {
 
 //****************************************************************************************************************************************** */
 
-//*******************************************             Post Reply to question by id           *******************************
+//*******************************************             Post a reply to question by id           *******************************
 
 app.post ('/replypage', async (req, res) => {
   console.log (req.body);
@@ -242,7 +247,7 @@ app.post ('/replypage', async (req, res) => {
 
 //****************************************************************************************************************************************** */
 
-//*******************************************             endpoint for recieving the views and rate counters           *******************************
+//*******************************************             endpoint for getting the views and likes counters           *******************************
 
 app.get ('/counters', async (req, res) => {
   try {
@@ -255,7 +260,7 @@ app.get ('/counters', async (req, res) => {
 
 //****************************************************************************************************************************************** */
 
-//***************************************               endpoint to update the rates              ********************************************
+//***************************************               endpoint to update the likes              ********************************************
 
 app.put ('/rates', async (req, res) => {
   const id = req.body.id;
@@ -291,7 +296,7 @@ app.put ('/views', async (req, res) => {
 
 //****************************************************************************************************************************************** */
 
-//*****************************************             Endpoint for getting user answers             *****************************************
+//*****************************************             Endpoint for getting a user answers             *****************************************
 
 app.get ('/userAnswers/:id', async (req, res) => {
   const id = parseInt (req.params.id);
@@ -382,7 +387,7 @@ app.delete ('/userAsked/:id', async (req, res) => {
 
 //****************************************************************************************************************************************** */
 
-//*****************************************             Endoint to edit user's answer             *********************************************
+//*****************************************             Endoint to edit a user's answer             *********************************************
 
 app.put ('/userAnswers/:id', async (req, res) => {
   console.log ('body = ' + req.body + 'params-id = ' + req.params.id);
@@ -420,6 +425,7 @@ app.put ('/userAsked/:id', async (req, res) => {
 
 //****************************************************************************************************************************************** */
 //***************************************             Endoint to Add a comment to an answer             *********************************************
+
 app.post ('/comments', async (req, res) => {
   console.log (req.body);
   const comment = req.body.comment;
@@ -446,7 +452,8 @@ app.post ('/comments', async (req, res) => {
 });
 
 //******************************************************************************************************************************************
-//***************************************             Endoint to display all the comments for an answer             *********************************************
+//***************************************             Endoint to get all the comments for an answer             *********************************************
+
 app.get ('/comments', async (req, res) => {
   try {
     const displayComment = await pool.query (
@@ -454,6 +461,55 @@ app.get ('/comments', async (req, res) => {
     );
 
     res.json (displayComment.rows).status (200);
+  } catch (err) {
+    console.error (err.message);
+  }
+});
+
+//******************************************************************************************************************************************
+//***************************************             Endoint to get all the likes details             *********************************************
+
+app.get ('/likes', async (req, res) => {
+  try {
+    const displayLikes = await pool.query ('select * from likes');
+
+    res.json (displayLikes.rows).status (200);
+  } catch (err) {
+    console.error (err.message);
+  }
+});
+
+//******************************************************************************************************************************************
+//***************************************             Endoint to get likes of a question for a user            *********************************************
+
+app.get ('/likes/:user_id/:question_id', async (req, res) => {
+  try {
+    const user_id = req.params.user_id;
+    const question_id = req.params.question_id;
+    const displayLikes = await pool.query (
+      'select likes from likes where users_id=$1 and question_id = $2',
+      [user_id, question_id]
+    );
+
+    res.json (displayLikes.rows[0].likes).status (200);
+  } catch (err) {
+    console.error (err.message);
+  }
+});
+
+//******************************************************************************************************************************************
+
+//***************************************             Endoint to update likes for a user           *********************************************
+app.put ('/likes/:user_id/:question_id', async (req, res) => {
+  try {
+    const user_id = req.params.user_id;
+    const question_id = req.params.question_id;
+    const updateLikes = pool.query (
+      'update likes set likes = NOT likes where users_id =$1 and question_id=$2'[
+        (user_id, question_id)
+      ]
+    );
+    res.json (updateLikes.rows).status (200);
   } catch (err) {
     console.error (err.message);
   }
