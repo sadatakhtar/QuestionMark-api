@@ -1,3 +1,5 @@
+drop table if exists likes;
+drop table if exists comment;
 drop table if exists answer;
 drop table if exists question;
 drop table if exists users;
@@ -24,6 +26,7 @@ question TEXT NOT NULL,
 module_id  INT REFERENCES module(id),
 users_id  INT REFERENCES users(id),
 question_date DATE NOT NULL,
+likes_counter INT DEFAULT 0,
 answers INT DEFAULT 0,
 views INT DEFAULT 0 ,
 rate INT DEFAULT 0 
@@ -35,6 +38,24 @@ question_id INT REFERENCES question(id) ,
 answer TEXT NOT NULL,
 users_id INT REFERENCES users(id),
 answer_date DATE
+);
+
+CREATE TABLE comment (
+id SERIAL PRIMARY KEY,
+comment TEXT NOT NULL,
+question_id INT REFERENCES question(id) ,
+answer_id INT REFERENCES answer(id) ,
+users_id  INT REFERENCES users(id),
+comment_date timestamp NOT NULL,
+comments_counter INT DEFAULT 0
+);
+
+
+CREATE TABLE likes (
+id SERIAL PRIMARY KEY,
+question_id INT REFERENCES question(id) ,
+users_id  INT REFERENCES users(id),
+likes BOOLEAN DEFAULT 'false'
 );
 
 
